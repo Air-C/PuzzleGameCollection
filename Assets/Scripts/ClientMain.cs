@@ -8,13 +8,18 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using Custom.Tool;
 using Unity.VisualScripting;
 using PGC.Controller;
+using PGC.System_Game;
 
 namespace PGC.MainEntry {
 
-    public class GameSystem : MonoBehaviour {
+    public class ClientMain : MonoBehaviour {
 
         // ==== Context ====
         GameContext ctx;
+
+        // ==== System ====
+        GameSystemEvents events_game;
+        GameSystemState state_game;
 
         // ==== AssetModule ====
         AssetModule assetModule;
@@ -33,11 +38,16 @@ namespace PGC.MainEntry {
         GridManager gridManager = new();
         SquareManager squareManager = new();
 
+        bool isAssetLoaded;
+
         #region Lifecycle: Awake
         void Awake() {
 
             // ==== Instantiate ====
             ctx = new GameContext();
+
+            events_game = new GameSystemEvents();
+            state_game = new GameSystemState();
 
             assetModule = new AssetModule();
 
@@ -46,15 +56,28 @@ namespace PGC.MainEntry {
             squareRepository = new SquareRepository();
 
             // ==== Inject ====
+            ctx.events_game = events_game;
+            ctx.state_game = state_game;
+
             ctx.assetModule = assetModule;
 
             ctx.userEntity = userEntity;
             ctx.missionEntity = missionEntity;
             ctx.squareRepository = squareRepository;
 
+            // ==== Binding ====
+            Binding();
+
             // ==== Pre Init ====
             StartCoroutine(PreInitIE());
 
+        }
+
+        void Binding() {
+            // Game
+            events_game.OnPauseHandle = () => {
+                Debug.Log("Game Paused: TODO, Open Pause Menu.");  
+            };
         }
 
         IEnumerator PreInitIE() {
@@ -63,7 +86,9 @@ namespace PGC.MainEntry {
             // ==== Post Init ====
 
             // ==== Enter First Screen ====
-            MissionController.NewGame(ctx);
+            GameSystem.NewGame(ctx);
+
+            isAssetLoaded = true;
         }
         #endregion
 
@@ -74,6 +99,12 @@ namespace PGC.MainEntry {
 
         #region Lifecycle: Update
         void Update() {
+            if (!isAssetLoaded) {
+                return;
+            }
+
+            GameSystem.Tick(ctx);
+
             if (Keyboard.current.aKey.wasPressedThisFrame) {
                 SquareMove(MoveDirection.Left);
             }

@@ -7,6 +7,9 @@ namespace PGC {
         public int shapeID_cur;
         public ShapeType shapeType_next;
 
+        public float gameTimer;
+        public float gameTimerMax;
+
         public MissionEntity() { }
 
     }
