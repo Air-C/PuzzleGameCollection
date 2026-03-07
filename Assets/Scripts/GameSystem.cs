@@ -14,9 +14,9 @@ public class GameSystem : MonoBehaviour
     private List<Square> squaresOfCurrentShape = new();
     private List<Square> squaresOfHoldShape = new();
     const float MoveInterval = 1.5f;
-    private Vector3 initPos = new(-2.75f, -4.75f, 0);
+    private Vector3 initPos = new(-2.5f, -4.5f, 0);
     private float gridWidth = 0.5f;
-
+    public GameObject spawnSquare;
 
     GridManager gridManager = new();
     ShapeManager shapeManager = new();
@@ -196,7 +196,7 @@ public class GameSystem : MonoBehaviour
         foreach (var square in squares)
         {
             Vector3 spawnPos = GetSquareWorldPos(square);
-            Addressables.InstantiateAsync(square.Name, spawnPos, Quaternion.identity).Completed +=
+            Addressables.InstantiateAsync(square.Name, spawnPos, Quaternion.identity, spawnSquare.transform).Completed +=
                 (AsyncOperationHandle<GameObject> handle) =>
                 {
                     if (handle.Status == AsyncOperationStatus.Succeeded)

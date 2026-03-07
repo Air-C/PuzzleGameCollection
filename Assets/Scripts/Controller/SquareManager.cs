@@ -58,13 +58,14 @@ namespace Controller
         public List<Square> GenerateSquaresForShape(Int2[] squareIndex, Int2 initGridIndex)
         {
             List<Square> squareList = new List<Square>();
+            string name = GetSquareName();
 
             foreach (var index in squareIndex)
             {
                 Square square = new Square()
                 {
                     GridIndex = index + initGridIndex,
-                    Name = GetSquareName(),
+                    Name = name,
                 };
                 squareList.Add(square);
             }
