@@ -3,9 +3,9 @@ using System;
 using UnityEngine;
 
 namespace PGC.Controller {
-    
+
     public static class MissionController {
-        
+
         public static void NewGame(GameContext ctx) {
             // 生成第一Shape
             ShapeEntity shape = Shape_Gen(ctx);
@@ -28,11 +28,7 @@ namespace PGC.Controller {
         }
 
         public static void Tick(GameContext ctx) {
-            // 1. Process Input
 
-            // 2. Do Logic
-
-            // 3. Render
         }
 
     }

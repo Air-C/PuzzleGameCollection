@@ -10,6 +10,7 @@ namespace PGC {
         public GameSystemState state_game;
 
         // ==== Module ====
+        public InputModule inputModule;
         public AssetModule assetModule;
 
         // ==== Entity ====

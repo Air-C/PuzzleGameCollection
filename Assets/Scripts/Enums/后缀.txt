@@ -1,0 +1,5 @@
+Type
+Status
+Enum
+
+Flags 位域

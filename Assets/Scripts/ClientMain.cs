@@ -22,6 +22,7 @@ namespace PGC.MainEntry {
         GameSystemState state_game;
 
         // ==== AssetModule ====
+        InputModule inputModule;
         AssetModule assetModule;
 
         // ==== Entity ====
@@ -49,6 +50,7 @@ namespace PGC.MainEntry {
             events_game = new GameSystemEvents();
             state_game = new GameSystemState();
 
+            inputModule = new InputModule();
             assetModule = new AssetModule();
 
             userEntity = new UserEntity();
@@ -59,6 +61,7 @@ namespace PGC.MainEntry {
             ctx.events_game = events_game;
             ctx.state_game = state_game;
 
+            ctx.inputModule = inputModule;
             ctx.assetModule = assetModule;
 
             ctx.userEntity = userEntity;
@@ -76,7 +79,7 @@ namespace PGC.MainEntry {
         void Binding() {
             // Game
             events_game.OnPauseHandle = () => {
-                Debug.Log("Game Paused: TODO, Open Pause Menu.");  
+                Debug.Log("Game Paused: TODO, Open Pause Menu.");
             };
         }
 
@@ -103,7 +106,8 @@ namespace PGC.MainEntry {
                 return;
             }
 
-            GameSystem.Tick(ctx);
+            float dt = Time.deltaTime;
+            GameSystem.Tick(ctx, dt);
 
             if (Keyboard.current.aKey.wasPressedThisFrame) {
                 SquareMove(MoveDirection.Left);
