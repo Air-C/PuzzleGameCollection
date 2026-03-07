@@ -183,7 +183,7 @@ namespace PGC.MainEntry {
             // 生成unity对象
             foreach (var square in squares) {
                 Vector3 spawnPos = GetSquareWorldPos(square);
-                Addressables.InstantiateAsync(square.Name, spawnPos, Quaternion.identity, spawnSquare.transform).Completed +=
+                Addressables.InstantiateAsync(square.AssetName, spawnPos, Quaternion.identity, spawnSquare.transform).Completed +=
                     (AsyncOperationHandle<GameObject> handle) => {
                         if (handle.Status == AsyncOperationStatus.Succeeded) {
                             square.SquareObj = handle.Result;

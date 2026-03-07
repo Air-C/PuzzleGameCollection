@@ -54,7 +54,7 @@ namespace PGC.Controller {
             foreach (var index in squareIndex) {
                 SquareEntity square = new SquareEntity() {
                     GridIndex = index + initGridIndex,
-                    Name = name,
+                    AssetName = name,
                 };
                 squareList.Add(square);
             }
