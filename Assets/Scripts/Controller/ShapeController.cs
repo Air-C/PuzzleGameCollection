@@ -14,8 +14,9 @@ namespace PGC.Controller {
 
             // Create
             var entity = new ShapeEntity();
+            bool hasSquare = ctx.assetModule.Square_TryGetRandom(out var squareSO);
             foreach (var gridIndex in shapeSO.squareIndices) {
-                var squareEntity = SquareController.Spawn(ctx);
+                var squareEntity = SquareController.SpawnBySO(ctx, squareSO);
                 if (squareEntity == null) {
                     Debug.LogError($"Failed to spawn SquareEntity for ShapeEntity with shapeType {type}");
                     continue;

@@ -9,7 +9,7 @@ namespace PGC.Controller {
         string path = "Assets/Prefab/";
         string suffix = ".prefab";
 
-        string GetSquareName() {
+        string GetRandomSquareName() {
             int randIndex = UnityEngine.Random.Range(0, squareNames.Length);
             return path + squareNames[randIndex] + suffix;
         }
@@ -49,7 +49,7 @@ namespace PGC.Controller {
 
         public List<SquareEntity> GenerateSquaresForShape(Int2[] squareIndex, Int2 initGridIndex) {
             List<SquareEntity> squareList = new List<SquareEntity>();
-            string name = GetSquareName();
+            string name = GetRandomSquareName();
 
             foreach (var index in squareIndex) {
                 SquareEntity square = new SquareEntity() {

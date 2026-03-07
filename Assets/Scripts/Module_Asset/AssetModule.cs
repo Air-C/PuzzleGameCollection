@@ -12,24 +12,27 @@ namespace PGC {
         Dictionary<ShapeType, ShapeSO> shapes;
         AsyncOperationHandle shapeHandle;
 
-        SquareEntity squareEntityPrefab;
-        AsyncOperationHandle squareEntityPrefabHandle;
+        Dictionary<int, SquareSO> squares;
+        List<int> squareTypeIDs;
+        AsyncOperationHandle squareHandle;
 
         public AssetModule() {
             shapes = new Dictionary<ShapeType, ShapeSO>();
+            squares = new Dictionary<int, SquareSO>();
+            squareTypeIDs = new List<int>();
         }
 
         public IEnumerator LoadAllIE() {
             yield return Shape_Load();
-            yield return SquareEntityPrefab_Load();
+            yield return Square_Load();
         }
 
         public void UnloadAll() {
             if (shapeHandle.IsValid()) {
                 Addressables.Release(shapeHandle);
             }
-            if (squareEntityPrefabHandle.IsValid()) {
-                Addressables.Release(squareEntityPrefabHandle);
+            if (squareHandle.IsValid()) {
+                Addressables.Release(squareHandle);
             }
         }
 
@@ -68,30 +71,44 @@ namespace PGC {
         }
         #endregion
 
-        #region SquareEntityPrefab
-        IEnumerator SquareEntityPrefab_Load() {
-            string address = "Entity_Square_Blue";
-            var handle = Addressables.LoadAssetAsync<SquareEntity>(address);
+        #region Square
+        IEnumerator Square_Load() {
+            string label = "Square";
+            AssetLabelReference labelReference = new AssetLabelReference();
+            labelReference.labelString = label;
+            var handle = Addressables.LoadAssetsAsync<SquareSO>(labelReference, null);
             yield return handle;
             if (!handle.IsDone) {
-                Debug.LogError($"Failed to load SquareEntity prefab with address {address}");
+                Debug.LogError($"Failed to load SquareSO with label {label}");
                 yield break;
             }
 
             if (handle.Status != AsyncOperationStatus.Succeeded) {
-                Debug.LogError($"Failed to load SquareEntity prefab with address {address}");
+                Debug.LogError($"Failed to load SquareSO with label {label}");
                 yield break;
             }
 
-            squareEntityPrefab = handle.Result;
-            squareEntityPrefabHandle = handle;
+            IList<SquareSO> list = handle.Result;
+            foreach (var item in list) {
+                bool succ = squares.TryAdd(item.typeID, item);
+                if (!succ) {
+                    Debug.LogError($"Failed to add SquareSO with typeID {item.typeID} to dictionary");
+                }
+                squareTypeIDs.Add(item.typeID);
+                Debug.Log($"Loaded SquareSO with typeID {item.typeID}");
+            }
+
+            squareHandle = handle;
         }
 
-        public SquareEntity GetSquareEntityPrefab() {
-            if (squareEntityPrefab == null) {
-                Debug.LogError("SquareEntity prefab is not loaded");
-            }
-            return squareEntityPrefab;
+        public bool Square_TryGet(int typeID, out SquareSO squareSO) {
+            return squares.TryGetValue(typeID, out squareSO);
+        }
+
+        public bool Square_TryGetRandom(out SquareSO squareSO) {
+            int index = UnityEngine.Random.Range(0, squareTypeIDs.Count);
+            int typeID = squareTypeIDs[index];
+            return squares.TryGetValue(typeID, out squareSO);
         }
         #endregion
     }

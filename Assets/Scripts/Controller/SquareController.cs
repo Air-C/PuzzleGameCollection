@@ -7,8 +7,17 @@ namespace PGC.Controller {
     // 生成, 销毁, Tick
     public static class SquareController {
 
-        public static SquareEntity Spawn(GameContext ctx) {
-            var squarePrefab = ctx.assetModule.GetSquareEntityPrefab();
+        public static SquareEntity Spawn(GameContext ctx, int typeID) {
+            bool has = ctx.assetModule.Square_TryGet(typeID, out SquareSO squareSO);
+            if (!has) {
+                Debug.LogError($"Failed to spawn SquareEntity with typeID {typeID} because SquareSO not found");
+                return null;
+            }
+            return SpawnBySO(ctx, squareSO);
+        }
+
+        public static SquareEntity SpawnBySO(GameContext ctx, SquareSO so) {
+            var squarePrefab = so.prefab;
             if (squarePrefab == null) {
                 Debug.LogError("Failed to spawn SquareEntity because prefab is not loaded");
                 return null;
