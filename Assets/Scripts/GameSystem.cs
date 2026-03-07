@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -15,7 +16,10 @@ namespace PGC.MainEntry {
         // ==== Context ====
         GameContext ctx;
 
-        // ==== User ====
+        // ==== AssetModule ====
+        AssetModule assetModule;
+
+        // ==== Entity ====
         UserEntity userEntity;
         SquareRepository squareRepository;
 
@@ -31,26 +35,41 @@ namespace PGC.MainEntry {
         ShapeManager shapeManager = new();
         SquareManager squareManager = new();
 
+        #region Lifecycle: Awake
         void Awake() {
+
             // ==== Instantiate ====
             ctx = new GameContext();
+
+            assetModule = new AssetModule();
+
             userEntity = new UserEntity();
             squareRepository = new SquareRepository();
 
             // ==== Inject ====
+            ctx.assetModule = assetModule;
+
             ctx.userEntity = userEntity;
             ctx.squareRepository = squareRepository;
 
             // ==== Pre Init ====
+            StartCoroutine(PreInitIE());
 
         }
 
+        IEnumerator PreInitIE() {
+            yield return assetModule.LoadAllIE();
+        }
+        #endregion
+
+        #region Lifecycle: Start 
         void Start() {
             GenerateShapeAndSquares();
             StartCoroutine(MoveSquareCoroutine());
-
         }
+        #endregion
 
+        #region Lifecycle: Update
         void Update() {
             if (Keyboard.current.aKey.wasPressedThisFrame) {
                 SquareMove(MoveDirection.Left);
@@ -69,6 +88,19 @@ namespace PGC.MainEntry {
             }
 
         }
+        #endregion
+
+        #region Lifecycle: OnDestroy
+        void OnDestroy() {
+#if UNITY_EDITOR
+            assetModule.UnloadAll();
+#endif
+        }
+
+        void OnApplicationQuit() {
+            assetModule.UnloadAll();
+        }
+        #endregion
 
         void SquareRotate(RotateDirection direction) {
             SquareMoveStatus status = gridManager.IsEnableRotate(squaresOfCurrentShape, direction);

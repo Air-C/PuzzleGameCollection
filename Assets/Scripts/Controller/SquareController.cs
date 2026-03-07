@@ -8,11 +8,18 @@ namespace PGC.Controller {
     public static class SquareController {
 
         public static SquareEntity Spawn(GameContext ctx, ShapeType type) {
+            bool has = ctx.assetModule.Square_TryGet(type, out SquareSO squareSO);
+            if (!has) {
+                Debug.LogError($"Failed to spawn SquareEntity with shapeType {type} because SquareSO not found");
+                return null;
+            }
+
             // Create
             var entity = new SquareEntity();
             entity.id = ctx.userEntity.ID_Square();
 
             // TODO: 
+            entity.shapeType = type;
 
             // Add
             ctx.squareRepository.Add(entity);
