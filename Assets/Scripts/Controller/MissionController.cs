@@ -27,7 +27,11 @@ namespace PGC.Controller {
             return ShapeController.Spawn(ctx, shapeSO.shapeType, topCenter);
         }
 
-        public static void Tick(GameContext ctx) {
+        public static void FixTick(GameContext ctx) {
+
+        }
+
+        public static void Render(GameContext ctx) {
 
         }
 

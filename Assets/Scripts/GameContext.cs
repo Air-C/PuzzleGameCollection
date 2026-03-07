@@ -19,6 +19,9 @@ namespace PGC {
         public MissionEntity missionEntity;
         public SquareRepository squareRepository;
 
+        // ==== Temp ====
+        public float restTime;
+
         public GameContext() { }
 
     }
