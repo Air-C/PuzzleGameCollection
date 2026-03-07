@@ -152,7 +152,6 @@ namespace PGC.MainEntry {
             if (status == SquareMoveStatus.ReachBottom) {
                 SquareSave();
             }
-
         }
 
         void SquareMove(MoveDirection moveDirection) {

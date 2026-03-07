@@ -54,6 +54,11 @@ namespace PGC.Controller {
                     Debug.Log($"MoveHorizontal with value {input.moveHorizontalInput.value}");
                 }
             }
+
+            // 变形
+            if (input.transformInput.status == InputStatus.Pressed) {
+                
+            }
         }
 
         public static void Render(GameContext ctx) {

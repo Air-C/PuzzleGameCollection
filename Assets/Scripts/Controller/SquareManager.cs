@@ -46,29 +46,5 @@ namespace PGC.Controller {
             }
             square.GridIndex = index;
         }
-
-        public List<SquareEntity> GenerateSquaresForShape(Int2[] squareIndex, Int2 initGridIndex) {
-            List<SquareEntity> squareList = new List<SquareEntity>();
-            string name = GetRandomSquareName();
-
-            foreach (var index in squareIndex) {
-                SquareEntity square = new SquareEntity() {
-                    GridIndex = index + initGridIndex,
-                    AssetName = name,
-                };
-                squareList.Add(square);
-            }
-
-            return squareList;
-        }
-
-        public List<SquareEntity> ChangeSquaresForShape(List<SquareEntity> squares, Int2 initGridIndex) {
-            List<SquareEntity> squareList = new List<SquareEntity>();
-
-            foreach (var square in squares) {
-                square.GridIndex += initGridIndex;
-            }
-            return squareList;
-        }
     }
 }
