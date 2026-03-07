@@ -8,7 +8,6 @@ namespace PGC {
     public class SquareEntity : MonoBehaviour {
 
         public int id;
-        public ShapeType shapeType;
         public UnityEngine.Object SquareObj { get; set; }
         public Int2 GridIndex { get; set; }
         public string AssetName { get; set; }

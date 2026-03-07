@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 74205a038557b394cb83225203e0b025, type: 3}
-  m_Name: So_Square_T
+  m_Name: So_Shape_Z
   m_EditorClassIdentifier: Assembly-CSharp::PGC.SquareSO
-  shapeType: 6
+  shapeType: 7
   squareIndex:
-  - x: -1
-    y: 0
   - x: 0
     y: 0
   - x: 1
     y: 0
+  - x: -1
+    y: 1
   - x: 0
     y: 1

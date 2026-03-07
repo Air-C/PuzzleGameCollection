@@ -9,30 +9,30 @@ namespace PGC {
 
     public class AssetModule {
 
-        Dictionary<ShapeType, SquareSO> squares;
-        AsyncOperationHandle squareHandle;
+        Dictionary<ShapeType, ShapeSO> shapes;
+        AsyncOperationHandle shapeHandle;
 
         public AssetModule() {
-            squares = new Dictionary<ShapeType, SquareSO>();
+            shapes = new Dictionary<ShapeType, ShapeSO>();
         }
 
         public IEnumerator LoadAllIE() {
-            yield return Square_Load();
+            yield return Shape_Load();
         }
 
         public void UnloadAll() {
-            if (squareHandle.IsValid()) {
-                Addressables.Release(squareHandle);
+            if (shapeHandle.IsValid()) {
+                Addressables.Release(shapeHandle);
             }
         }
 
-        #region Square
-        IEnumerator Square_Load() {
-            string label = "Square";
+        #region Shape
+        IEnumerator Shape_Load() {
+            string label = "Shape";
             AssetLabelReference labelReference = new AssetLabelReference();
             labelReference.labelString = label;
             // handle 是非托管内存, 不由GC管理
-            var handle = Addressables.LoadAssetsAsync<SquareSO>(labelReference, null);
+            var handle = Addressables.LoadAssetsAsync<ShapeSO>(labelReference, null);
             yield return handle;
             if (!handle.IsDone) {
                 Debug.LogError($"Failed to load SquareSO with label {label}");
@@ -44,20 +44,20 @@ namespace PGC {
                 yield break;
             }
 
-            IList<SquareSO> list = handle.Result;
+            IList<ShapeSO> list = handle.Result;
             foreach (var item in list) {
-                bool succ = squares.TryAdd(item.shapeType, item);
+                bool succ = shapes.TryAdd(item.shapeType, item);
                 if (!succ) {
                     Debug.LogError($"Failed to add SquareSO with shapeType {item.shapeType} to dictionary");
                 }
                 Debug.Log($"Loaded SquareSO with shapeType {item.shapeType}");
             }
 
-            squareHandle = handle;
+            shapeHandle = handle;
         }
 
-        public bool Square_TryGet(ShapeType shapeType, out SquareSO squareSO) {
-            return squares.TryGetValue(shapeType, out squareSO);
+        public bool Shape_TryGet(ShapeType shapeType, out ShapeSO shapeSO) {
+            return shapes.TryGetValue(shapeType, out shapeSO);
         }
         #endregion
     }
