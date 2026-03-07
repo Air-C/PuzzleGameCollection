@@ -12,17 +12,24 @@ namespace PGC {
         Dictionary<ShapeType, ShapeSO> shapes;
         AsyncOperationHandle shapeHandle;
 
+        SquareEntity squareEntityPrefab;
+        AsyncOperationHandle squareEntityPrefabHandle;
+
         public AssetModule() {
             shapes = new Dictionary<ShapeType, ShapeSO>();
         }
 
         public IEnumerator LoadAllIE() {
             yield return Shape_Load();
+            yield return SquareEntityPrefab_Load();
         }
 
         public void UnloadAll() {
             if (shapeHandle.IsValid()) {
                 Addressables.Release(shapeHandle);
+            }
+            if (squareEntityPrefabHandle.IsValid()) {
+                Addressables.Release(squareEntityPrefabHandle);
             }
         }
 
@@ -58,6 +65,33 @@ namespace PGC {
 
         public bool Shape_TryGet(ShapeType shapeType, out ShapeSO shapeSO) {
             return shapes.TryGetValue(shapeType, out shapeSO);
+        }
+        #endregion
+
+        #region SquareEntityPrefab
+        IEnumerator SquareEntityPrefab_Load() {
+            string address = "Entity_Square_Blue";
+            var handle = Addressables.LoadAssetAsync<SquareEntity>(address);
+            yield return handle;
+            if (!handle.IsDone) {
+                Debug.LogError($"Failed to load SquareEntity prefab with address {address}");
+                yield break;
+            }
+
+            if (handle.Status != AsyncOperationStatus.Succeeded) {
+                Debug.LogError($"Failed to load SquareEntity prefab with address {address}");
+                yield break;
+            }
+
+            squareEntityPrefab = handle.Result;
+            squareEntityPrefabHandle = handle;
+        }
+
+        public SquareEntity GetSquareEntityPrefab() {
+            if (squareEntityPrefab == null) {
+                Debug.LogError("SquareEntity prefab is not loaded");
+            }
+            return squareEntityPrefab;
         }
         #endregion
     }

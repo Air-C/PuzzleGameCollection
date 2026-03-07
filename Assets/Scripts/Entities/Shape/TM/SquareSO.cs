@@ -8,7 +8,7 @@ namespace PGC {
     public class ShapeSO : ScriptableObject {
 
         public ShapeType shapeType;
-        public Int2[] squareIndex;
+        public Int2[] squareIndices;
 
     }
 

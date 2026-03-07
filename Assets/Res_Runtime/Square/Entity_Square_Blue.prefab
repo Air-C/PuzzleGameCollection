@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 842956614634023344}
   - component: {fileID: 2452168852130835683}
   - component: {fileID: 3306359218932133396}
+  - component: {fileID: -7743194023982479701}
   m_Layer: 0
-  m_Name: BlueSquare
+  m_Name: Entity_Square_Blue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -138,3 +139,16 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &-7743194023982479701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6780899893602596553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11c9c50418b04477b2b49c861e468066, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PGC.SquareEntity
+  id: 0

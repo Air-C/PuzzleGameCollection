@@ -27,8 +27,6 @@ namespace PGC.MainEntry {
         private List<SquareEntity> squaresOfCurrentShape = new();
         private List<SquareEntity> squaresOfHoldShape = new();
         const float MoveInterval = 1.5f;
-        private Vector3 initPos = new(-2.5f, -4.5f, 0);
-        private float gridWidth = 0.5f;
         public GameObject spawnSquare;
 
         GridManager gridManager = new();
@@ -214,7 +212,7 @@ namespace PGC.MainEntry {
             List<SquareEntity> squares = squareManager.GenerateSquaresForShape(shapeData.squareIndex, initGridIndex);
             // 生成unity对象
             foreach (var square in squares) {
-                Vector3 spawnPos = GetSquareWorldPos(square);
+                Vector3 spawnPos = GridHelper.GetSquareWorldPos(square.GridIndex);
                 Addressables.InstantiateAsync(square.AssetName, spawnPos, Quaternion.identity, spawnSquare.transform).Completed +=
                     (AsyncOperationHandle<GameObject> handle) => {
                         if (handle.Status == AsyncOperationStatus.Succeeded) {
@@ -235,12 +233,9 @@ namespace PGC.MainEntry {
         void RenderSquare(SquareEntity square) {
             GameObject squareObj = square.SquareObj as GameObject;
             if (squareObj) {
-                squareObj.transform.position = GetSquareWorldPos(square);
+                squareObj.transform.position = GridHelper.GetSquareWorldPos(square.GridIndex);
             }
         }
 
-        Vector3 GetSquareWorldPos(SquareEntity square) {
-            return new Vector3(square.GridIndex.x * gridWidth, square.GridIndex.y * gridWidth, 0) + initPos;
-        }
     }
 }

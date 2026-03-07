@@ -22,4 +22,12 @@ MonoBehaviour:
     y: 0
   - x: -1
     y: 1
-  prefab: {fileID: 1007986659388597415, guid: 2a6aff6d5a36a684bb1500965e3fe267, type: 3}
+  squareIndices:
+  - x: -1
+    y: 0
+  - x: 0
+    y: 0
+  - x: 1
+    y: 0
+  - x: -1
+    y: 1

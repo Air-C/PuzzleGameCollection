@@ -41,7 +41,7 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 85f17c6ff91a09b4f8f39edc18c7f931
-    m_Address: Assets/Prefab/BlueSquare.prefab
+    m_Address: Entity_Square_Blue
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

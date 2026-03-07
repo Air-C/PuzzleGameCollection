@@ -10,6 +10,7 @@ namespace PGC {
 
         // ==== Entity ====
         public UserEntity userEntity;
+        public ShapeEntity shapeEntity;
         public SquareRepository squareRepository;
 
         public GameContext() { }

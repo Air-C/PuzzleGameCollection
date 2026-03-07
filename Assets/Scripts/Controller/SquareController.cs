@@ -7,17 +7,16 @@ namespace PGC.Controller {
     // 生成, 销毁, Tick
     public static class SquareController {
 
-        public static SquareEntity Spawn(GameContext ctx, ShapeType type, Int2 gridIndex) {
-            bool has = ctx.assetModule.Shape_TryGet(type, out ShapeSO squareSO);
-            if (!has) {
-                Debug.LogError($"Failed to spawn SquareEntity with shapeType {type} because SquareSO not found");
+        public static SquareEntity Spawn(GameContext ctx) {
+            var squarePrefab = ctx.assetModule.GetSquareEntityPrefab();
+            if (squarePrefab == null) {
+                Debug.LogError("Failed to spawn SquareEntity because prefab is not loaded");
                 return null;
             }
 
             // Create
-            var entity = new SquareEntity();
+            var entity = GameObject.Instantiate(squarePrefab);
             entity.id = ctx.userEntity.ID_Square();
-            entity.GridIndex = gridIndex;
 
             // Add
             ctx.squareRepository.Add(entity);
@@ -29,6 +28,7 @@ namespace PGC.Controller {
             ctx.squareRepository.Remove(entity);
 
             // Destroy
+            GameObject.Destroy(entity.gameObject);
         }
 
         // 高层的销毁
