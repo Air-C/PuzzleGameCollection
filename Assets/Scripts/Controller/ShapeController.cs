@@ -22,6 +22,7 @@ namespace PGC.Controller {
                     continue;
                 }
                 squareEntity.GridIndex = startGridIndex + gridIndex;
+                squareEntity.TF_Pos_Set(GridHelper.GetSquareWorldPos(squareEntity.GridIndex));
                 entity.AddSquare(squareEntity.id);
             }
 

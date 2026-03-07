@@ -21,6 +21,7 @@ namespace PGC.MainEntry {
 
         // ==== Entity ====
         UserEntity userEntity;
+        MissionEntity missionEntity;
         SquareRepository squareRepository;
 
         // 管理当前下落中的方块
@@ -30,7 +31,6 @@ namespace PGC.MainEntry {
         public GameObject spawnSquare;
 
         GridManager gridManager = new();
-        ShapeManager shapeManager = new();
         SquareManager squareManager = new();
 
         #region Lifecycle: Awake
@@ -42,12 +42,14 @@ namespace PGC.MainEntry {
             assetModule = new AssetModule();
 
             userEntity = new UserEntity();
+            missionEntity = new MissionEntity();
             squareRepository = new SquareRepository();
 
             // ==== Inject ====
             ctx.assetModule = assetModule;
 
             ctx.userEntity = userEntity;
+            ctx.missionEntity = missionEntity;
             ctx.squareRepository = squareRepository;
 
             // ==== Pre Init ====
@@ -57,13 +59,16 @@ namespace PGC.MainEntry {
 
         IEnumerator PreInitIE() {
             yield return assetModule.LoadAllIE();
+
+            // ==== Post Init ====
+
+            // ==== Enter First Screen ====
+            MissionController.NewGame(ctx);
         }
         #endregion
 
         #region Lifecycle: Start 
         void Start() {
-            GenerateShapeAndSquares();
-            StartCoroutine(MoveSquareCoroutine());
         }
         #endregion
 
@@ -135,7 +140,7 @@ namespace PGC.MainEntry {
             gridManager.SaveSquare(squaresOfCurrentShape);
             RowFullCheck();
             squaresOfCurrentShape.Clear();
-            GenerateShapeAndSquares();
+            // GenerateShapeAndSquares();
         }
 
         System.Collections.IEnumerator MoveSquareCoroutine() {
@@ -190,39 +195,39 @@ namespace PGC.MainEntry {
         }
 
 
-        void GenerateShapeAndSquares() {
-            if (squaresOfHoldShape.Count > 0) {
-                //hold方块的位置从等候区移动到游戏区
-                squaresOfCurrentShape.AddRange(squaresOfHoldShape);
-                squareManager.ChangeSquaresForShape(squaresOfCurrentShape, gridManager.gridTopCenter);
+        // void GenerateShapeAndSquares() {
+        //     if (squaresOfHoldShape.Count > 0) {
+        //         //hold方块的位置从等候区移动到游戏区
+        //         squaresOfCurrentShape.AddRange(squaresOfHoldShape);
+        //         squareManager.ChangeSquaresForShape(squaresOfCurrentShape, gridManager.gridTopCenter);
 
-                //重新生成等候方块
-                squaresOfHoldShape.Clear();
-                squaresOfHoldShape = RandSpawnShapeAndRender(GridManager.Hold);
-            } else {
-                squaresOfCurrentShape = RandSpawnShapeAndRender();
-            }
-        }
+        //         //重新生成等候方块
+        //         squaresOfHoldShape.Clear();
+        //         squaresOfHoldShape = RandSpawnShapeAndRender(GridManager.Hold);
+        //     } else {
+        //         squaresOfCurrentShape = RandSpawnShapeAndRender();
+        //     }
+        // }
 
 
-        List<SquareEntity> RandSpawnShapeAndRender(string type = GridManager.Current) {
-            //处理生成逻辑
-            var shapeData = shapeManager.GetRandomShape();
-            Vector2Int initGridIndex = type == GridManager.Current ? gridManager.gridTopCenter : gridManager.gridHoldCenter;
-            List<SquareEntity> squares = squareManager.GenerateSquaresForShape(shapeData.squareIndex, initGridIndex);
-            // 生成unity对象
-            foreach (var square in squares) {
-                Vector3 spawnPos = GridHelper.GetSquareWorldPos(square.GridIndex);
-                Addressables.InstantiateAsync(square.AssetName, spawnPos, Quaternion.identity, spawnSquare.transform).Completed +=
-                    (AsyncOperationHandle<GameObject> handle) => {
-                        if (handle.Status == AsyncOperationStatus.Succeeded) {
-                            square.SquareObj = handle.Result;
-                        }
-                    };
-            }
+        // List<SquareEntity> RandSpawnShapeAndRender(string type = GridManager.Current) {
+        //     //处理生成逻辑
+        //     var shapeData = shapeManager.GetRandomShape();
+        //     Vector2Int initGridIndex = type == GridManager.Current ? gridManager.gridTopCenter : gridManager.gridHoldCenter;
+        //     List<SquareEntity> squares = squareManager.GenerateSquaresForShape(shapeData.squareIndex, initGridIndex);
+        //     // 生成unity对象
+        //     foreach (var square in squares) {
+        //         Vector3 spawnPos = GridHelper.GetSquareWorldPos(square.GridIndex);
+        //         Addressables.InstantiateAsync(square.AssetName, spawnPos, Quaternion.identity, spawnSquare.transform).Completed +=
+        //             (AsyncOperationHandle<GameObject> handle) => {
+        //                 if (handle.Status == AsyncOperationStatus.Succeeded) {
+        //                     square.SquareObj = handle.Result;
+        //                 }
+        //             };
+        //     }
 
-            return squares;
-        }
+        //     return squares;
+        // }
 
         void RenderCurrentSquare(List<SquareEntity> squares) {
             foreach (var square in squares) {

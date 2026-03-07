@@ -10,6 +10,7 @@ namespace PGC {
     public class AssetModule {
 
         Dictionary<ShapeType, ShapeSO> shapes;
+        List<ShapeType> shapeTypes;
         AsyncOperationHandle shapeHandle;
 
         Dictionary<int, SquareSO> squares;
@@ -18,6 +19,8 @@ namespace PGC {
 
         public AssetModule() {
             shapes = new Dictionary<ShapeType, ShapeSO>();
+            shapeTypes = new List<ShapeType>();
+
             squares = new Dictionary<int, SquareSO>();
             squareTypeIDs = new List<int>();
         }
@@ -60,6 +63,7 @@ namespace PGC {
                 if (!succ) {
                     Debug.LogError($"Failed to add SquareSO with shapeType {item.shapeType} to dictionary");
                 }
+                shapeTypes.Add(item.shapeType);
                 Debug.Log($"Loaded SquareSO with shapeType {item.shapeType}");
             }
 
@@ -67,6 +71,12 @@ namespace PGC {
         }
 
         public bool Shape_TryGet(ShapeType shapeType, out ShapeSO shapeSO) {
+            return shapes.TryGetValue(shapeType, out shapeSO);
+        }
+
+        public bool Shape_TryGetRandom(out ShapeSO shapeSO) {
+            int index = UnityEngine.Random.Range(0, shapeTypes.Count);
+            ShapeType shapeType = shapeTypes[index];
             return shapes.TryGetValue(shapeType, out shapeSO);
         }
         #endregion

@@ -11,6 +11,7 @@ namespace PGC {
         // ==== Entity ====
         public UserEntity userEntity;
         public ShapeEntity shapeEntity;
+        public MissionEntity missionEntity;
         public SquareRepository squareRepository;
 
         public GameContext() { }

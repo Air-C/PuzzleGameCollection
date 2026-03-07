@@ -12,8 +12,8 @@ namespace PGC.Controller {
 
         public SquareEntity[,] grid = new SquareEntity[10, 18];
         public readonly Int2 gridTopCenter = new(4, 14);
-        public readonly Int2 gridHoldCenter = new(8, 16);
         public readonly Int2 gridBorder = new(10, 14);
+        public readonly Int2 gridHoldCenter = new(8, 16);
 
         public GridManager() {
 

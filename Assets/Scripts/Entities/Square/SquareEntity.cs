@@ -17,5 +17,9 @@ namespace PGC {
 
         }
 
+        public void TF_Pos_Set(Vector3 pos) {
+            transform.position = pos;
+        }
+
     }
 }
