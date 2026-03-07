@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Square
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Square
+  m_GUID: 5be9e0882f6b2c34e8b15f1064cf0421
+  m_SerializeEntries:
+  - m_GUID: 3da9ac7402cd47a4780ddbf1cdb18e0f
+    m_Address: Assets/Res_Runtime/Square/L/So_Square_L.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Square
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 56c695f888afc064b93721e07dab8303
+    m_Address: Assets/Res_Runtime/Square/I/So_Square_I.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Square
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8a8864b9210a87648bfd79f3ebf8cc67
+    m_Address: Assets/Res_Runtime/Square/Z/So_Square_Z.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Square
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9508dc7f297464844a2c389ac9e61a85
+    m_Address: Assets/Res_Runtime/Square/O/So_Square_O.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Square
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b9d288dad4e22f240857fe8fee4a6dd8
+    m_Address: Assets/Res_Runtime/Square/S/So_Square_S.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Square
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cad3b3f5e2df44b40a7a97184b69ad19
+    m_Address: Assets/Res_Runtime/Square/T/So_Square_T.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Square
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cca55f519d4a90a4a93ffc4849dc8c91
+    m_Address: Assets/Res_Runtime/Square/J/So_Square_J.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Square
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 7cbbc3eb528db194c8cc446a5752b3dc, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 4f17ab43ff2b76e46a82242dc55d8267, type: 2}
+    - {fileID: 11400000, guid: c835ab0a2534c284d893516cf1308d6a, type: 2}

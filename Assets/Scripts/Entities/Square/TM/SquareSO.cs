@@ -10,8 +10,6 @@ namespace PGC {
         public ShapeType shapeType;
         public Int2[] squareIndex;
 
-        public GameObject prefab;
-
     }
 
 }
