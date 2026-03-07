@@ -6,6 +6,7 @@ namespace PGC.System_Game {
     public static class GameSystem {
 
         public static void NewGame(GameContext ctx) {
+            ctx.state_game.isRunning = true;
             MissionController.NewGame(ctx);
         }
 
@@ -35,7 +36,7 @@ namespace PGC.System_Game {
         }
 
         static void FixTick(GameContext ctx, float fixdt) {
-            MissionController.FixTick(ctx);
+            MissionController.FixTick(ctx, fixdt);
         }
 
     }

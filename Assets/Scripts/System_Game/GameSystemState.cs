@@ -6,6 +6,10 @@ namespace PGC {
         
         public bool isRunning;
 
+        public GameSystemState() {
+            isRunning = false;
+        }
+
     }
 
 }

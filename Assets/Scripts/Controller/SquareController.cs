@@ -47,6 +47,10 @@ namespace PGC.Controller {
         }
 
         // 旋转, 移动, 消除
+        public static void MoveDown(GameContext ctx, SquareEntity entity) {
+            entity.GridIndex += Int2.Down;
+            entity.TF_Pos_Set(GridHelper.GetSquareWorldPos(entity.GridIndex));
+        }
 
     }
 }

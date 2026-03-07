@@ -15,8 +15,7 @@ namespace PGC {
 
         public InputModule() {
             inputs = new PGCInput();
-
-            moveHorizontalInput = new InputModel<float>();
+            inputs.Enable();
         }
 
         public void Tick(float dt) {
@@ -24,10 +23,17 @@ namespace PGC {
             // Horizontal Movement
             var moveLeftStatus = GetStatus(world.MoveLeft);
             var moveRightStatus = GetStatus(world.MoveRight);
-
-            moveHorizontalInput.status = moveLeftStatus == InputStatus.Held ? InputStatus.Held : moveRightStatus;
-            float x = moveLeftStatus == InputStatus.Held ? -1 : moveRightStatus == InputStatus.Held ? 1 : 0;
-            moveHorizontalInput.value = x;
+            if (moveLeftStatus == InputStatus.Pressed || moveLeftStatus == InputStatus.Held) {
+                moveHorizontalInput.status = moveLeftStatus;
+                moveHorizontalInput.value = -1;
+            } else if (moveRightStatus == InputStatus.Pressed || moveRightStatus == InputStatus.Held) {
+                moveHorizontalInput.status = moveRightStatus;
+                moveHorizontalInput.value = 1;
+            } else {
+                moveHorizontalInput.status = InputStatus.None;
+                moveHorizontalInput.value = 0;
+            }
+            Debug.Log($"moveHorizontalInput: status={moveHorizontalInput.status}, value={moveHorizontalInput.value}");
 
             // Down Movement
             var moveDownStatus = GetStatus(world.MoveDown);

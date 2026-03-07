@@ -4,6 +4,8 @@ using UnityEngine;
 [Serializable] // 加上这个属性, 才能在Inspector里显示
 public struct Int2 {
 
+    public static Int2 Down = new Int2(0, -1);
+
     public int x, y;
 
     public Int2(int x, int y) {
