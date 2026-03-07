@@ -1,13 +1,13 @@
 ﻿
 using Custom.Tool;
 
-namespace Controller
-{
-    public class ShapeManager
-    {
-        private (string shapeName,Int2[] squareIndex)[] shapeDatas = 
+namespace PGC.Controller {
+
+    public class ShapeManager {
+
+        (string shapeName, Int2[] squareIndex)[] shapeDatas =
         {
-            ("IShape",new Int2[4]{    
+            ("IShape",new Int2[4]{
                 new (-1,0),
                 new (0,0),
                 new (1,0),
@@ -58,12 +58,11 @@ namespace Controller
         };
 
 
-        public (string shapeName,Int2[] squareIndex) GetRandomShape()
-        {
+        public (string shapeName, Int2[] squareIndex) GetRandomShape() {
             int shapeIndex = ConstantTool.GetRandomInt(0, shapeDatas.Length);
-            return (shapeDatas[shapeIndex].shapeName,shapeDatas[shapeIndex].squareIndex);
+            return (shapeDatas[shapeIndex].shapeName, shapeDatas[shapeIndex].squareIndex);
         }
-        
+
 
     }
 }

@@ -1,233 +1,214 @@
 using System.Collections.Generic;
 using System.Linq;
-using Controller;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.InputSystem;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Custom.Tool;
 using Unity.VisualScripting;
+using PGC.Controller;
 
-public class GameSystem : MonoBehaviour
-{
-    // 管理当前下落中的方块
-    private List<Square> squaresOfCurrentShape = new();
-    private List<Square> squaresOfHoldShape = new();
-    const float MoveInterval = 1.5f;
-    private Vector3 initPos = new(-2.5f, -4.5f, 0);
-    private float gridWidth = 0.5f;
-    public GameObject spawnSquare;
+namespace PGC.MainEntry {
 
-    GridManager gridManager = new();
-    ShapeManager shapeManager = new();
-    SquareManager squareManager = new();
+    public class GameSystem : MonoBehaviour {
 
+        // ==== Context ====
+        GameContext ctx;
 
-    void Start()
-    {
-        GenerateShapeAndSquares();
-        StartCoroutine(MoveSquareCoroutine());
+        // ==== User ====
+        UserEntity userEntity;
+        SquareRepository squareRepository;
 
-    }
+        // 管理当前下落中的方块
+        private List<SquareEntity> squaresOfCurrentShape = new();
+        private List<SquareEntity> squaresOfHoldShape = new();
+        const float MoveInterval = 1.5f;
+        private Vector3 initPos = new(-2.5f, -4.5f, 0);
+        private float gridWidth = 0.5f;
+        public GameObject spawnSquare;
 
-    void Update()
-    {
-        if (Keyboard.current.aKey.wasPressedThisFrame)
-        {
-            SquareMove(MoveDirection.Left);
+        GridManager gridManager = new();
+        ShapeManager shapeManager = new();
+        SquareManager squareManager = new();
+
+        void Awake() {
+            // ==== Instantiate ====
+            ctx = new GameContext();
+            userEntity = new UserEntity();
+            squareRepository = new SquareRepository();
+
+            // ==== Inject ====
+            ctx.userEntity = userEntity;
+            ctx.squareRepository = squareRepository;
+
+            // ==== Pre Init ====
+
         }
 
-        if (Keyboard.current.dKey.wasPressedThisFrame)
-        {
-            SquareMove(MoveDirection.Right);
+        void Start() {
+            GenerateShapeAndSquares();
+            StartCoroutine(MoveSquareCoroutine());
+
         }
 
-        if (Keyboard.current.wKey.wasPressedThisFrame)
-        {
-            SquareRotate(RotateDirection.Right);
-        }
-
-        if (Keyboard.current.sKey.wasPressedThisFrame)
-        {
-            SquareRotate(RotateDirection.Left);
-        }
-
-    }
-
-    void SquareRotate(RotateDirection direction)
-    {
-        SquareMoveStatus status = gridManager.IsEnableRotate(squaresOfCurrentShape, direction);
-        if (status == SquareMoveStatus.EnableMove)
-        {
-            foreach (var square in squaresOfCurrentShape)
-            {
-                squareManager.Roate(square, direction);
+        void Update() {
+            if (Keyboard.current.aKey.wasPressedThisFrame) {
+                SquareMove(MoveDirection.Left);
             }
-            RenderCurrentSquare(squaresOfCurrentShape);
-        }
 
-        if (status == SquareMoveStatus.ReachBottom)
-        {
-            SquareSave();
-        }
-
-    }
-
-    void SquareMove(MoveDirection moveDirection)
-    {
-        SquareMoveStatus status = gridManager.IsEnableMove(squaresOfCurrentShape, moveDirection);
-
-        if (status == SquareMoveStatus.EnableMove)
-        {
-            foreach (var square in squaresOfCurrentShape)
-            {
-                squareManager.Move(square, moveDirection);
+            if (Keyboard.current.dKey.wasPressedThisFrame) {
+                SquareMove(MoveDirection.Right);
             }
-            RenderCurrentSquare(squaresOfCurrentShape);
+
+            if (Keyboard.current.wKey.wasPressedThisFrame) {
+                SquareRotate(RotateDirection.Right);
+            }
+
+            if (Keyboard.current.sKey.wasPressedThisFrame) {
+                SquareRotate(RotateDirection.Left);
+            }
+
         }
 
-        if (status == SquareMoveStatus.ReachBottom)
-        {
-            SquareSave();
+        void SquareRotate(RotateDirection direction) {
+            SquareMoveStatus status = gridManager.IsEnableRotate(squaresOfCurrentShape, direction);
+            if (status == SquareMoveStatus.EnableMove) {
+                foreach (var square in squaresOfCurrentShape) {
+                    squareManager.Roate(square, direction);
+                }
+                RenderCurrentSquare(squaresOfCurrentShape);
+            }
+
+            if (status == SquareMoveStatus.ReachBottom) {
+                SquareSave();
+            }
+
         }
 
-    }
+        void SquareMove(MoveDirection moveDirection) {
+            SquareMoveStatus status = gridManager.IsEnableMove(squaresOfCurrentShape, moveDirection);
 
-    void SquareSave()
-    {
-        gridManager.SaveSquare(squaresOfCurrentShape);
-        RowFullCheck();
-        squaresOfCurrentShape.Clear();
-        GenerateShapeAndSquares();
-    }
+            if (status == SquareMoveStatus.EnableMove) {
+                foreach (var square in squaresOfCurrentShape) {
+                    squareManager.Move(square, moveDirection);
+                }
+                RenderCurrentSquare(squaresOfCurrentShape);
+            }
 
-    System.Collections.IEnumerator MoveSquareCoroutine()
-    {
-        SquareMoveStatus status = gridManager.IsEnableMove(squaresOfCurrentShape, MoveDirection.Down);
-        while (status == SquareMoveStatus.EnableMove)
-        {
-            yield return new WaitForSeconds(MoveInterval);
-            SquareMove(MoveDirection.Down);
-        }
-    }
+            if (status == SquareMoveStatus.ReachBottom) {
+                SquareSave();
+            }
 
-    void RowFullCheck()
-    {
-        HashSet<int> rows = new HashSet<int>();
-        foreach (var square in squaresOfCurrentShape)
-        {
-            rows.Add(square.GridIndex.y);
         }
 
-        List<int> shouldRemove = new();
-        foreach (var row in rows)
-        {
-            if (!gridManager.IsRowFull(row))
-            {
-                shouldRemove.Add(row);
+        void SquareSave() {
+            gridManager.SaveSquare(squaresOfCurrentShape);
+            RowFullCheck();
+            squaresOfCurrentShape.Clear();
+            GenerateShapeAndSquares();
+        }
+
+        System.Collections.IEnumerator MoveSquareCoroutine() {
+            SquareMoveStatus status = gridManager.IsEnableMove(squaresOfCurrentShape, MoveDirection.Down);
+            while (status == SquareMoveStatus.EnableMove) {
+                yield return new WaitForSeconds(MoveInterval);
+                SquareMove(MoveDirection.Down);
             }
         }
 
-        foreach (var removeRow in shouldRemove)
-        {
-            rows.Remove(removeRow);
+        void RowFullCheck() {
+            HashSet<int> rows = new HashSet<int>();
+            foreach (var square in squaresOfCurrentShape) {
+                rows.Add(square.GridIndex.y);
+            }
+
+            List<int> shouldRemove = new();
+            foreach (var row in rows) {
+                if (!gridManager.IsRowFull(row)) {
+                    shouldRemove.Add(row);
+                }
+            }
+
+            foreach (var removeRow in shouldRemove) {
+                rows.Remove(removeRow);
+            }
+
+            if (rows.Count > 0) {
+                ClearRow(rows);
+            }
         }
 
-        if (rows.Count > 0)
-        {
-            ClearRow(rows);
-        }
-    }
+        void ClearRow(HashSet<int> rows) {
+            // 销毁unity方块,播放特效
+            foreach (var row in rows) {
+                for (int x = 0; x < gridManager.grid.GetLength(0); x++) {
+                    GameObject obj = gridManager.grid[x, row].SquareObj as GameObject;
+                    if (obj) {
+                        Destroy(obj);
+                    }
+                }
+            }
 
-    void ClearRow(HashSet<int> rows)
-    {
-        // 销毁unity方块,播放特效
-        foreach (var row in rows)
-        {
-            for (int x = 0; x < gridManager.grid.GetLength(0); x++)
-            {
-                GameObject obj = gridManager.grid[x, row].SquareObj as GameObject;
-                if (obj)
-                {
-                    Destroy(obj);
+            // 清除逻辑中的方块
+            gridManager.ClearRow(rows);
+            //重置场景中方块的位置
+            for (int x = 0; x < gridManager.grid.GetLength(0); x++) {
+                for (int y = rows.Min(); y < gridManager.grid.GetLength(1); y++) {
+                    RenderSquare(gridManager.grid[x, y]);
                 }
             }
         }
 
-        // 清除逻辑中的方块
-        gridManager.ClearRow(rows);
-        //重置场景中方块的位置
-        for (int x = 0; x < gridManager.grid.GetLength(0); x++)
-        {
-            for (int y = rows.Min(); y < gridManager.grid.GetLength(1); y++)
-            {
-                RenderSquare(gridManager.grid[x,y]);
+
+        void GenerateShapeAndSquares() {
+            if (squaresOfHoldShape.Count > 0) {
+                //hold方块的位置从等候区移动到游戏区
+                squaresOfCurrentShape.AddRange(squaresOfHoldShape);
+                squareManager.ChangeSquaresForShape(squaresOfCurrentShape, gridManager.gridTopCenter);
+
+                //重新生成等候方块
+                squaresOfHoldShape.Clear();
+                squaresOfHoldShape = RandSpawnShapeAndRender(GridManager.Hold);
+            } else {
+                squaresOfCurrentShape = RandSpawnShapeAndRender();
             }
         }
-    }
 
 
-    void GenerateShapeAndSquares()
-    {
-        if (squaresOfHoldShape.Count > 0)
-        {
-            //hold方块的位置从等候区移动到游戏区
-            squaresOfCurrentShape.AddRange(squaresOfHoldShape);
-            squareManager.ChangeSquaresForShape(squaresOfCurrentShape, gridManager.gridTopCenter);
+        List<SquareEntity> RandSpawnShapeAndRender(string type = GridManager.Current) {
+            //处理生成逻辑
+            var shapeData = shapeManager.GetRandomShape();
+            Vector2Int initGridIndex = type == GridManager.Current ? gridManager.gridTopCenter : gridManager.gridHoldCenter;
+            List<SquareEntity> squares = squareManager.GenerateSquaresForShape(shapeData.squareIndex, initGridIndex);
+            // 生成unity对象
+            foreach (var square in squares) {
+                Vector3 spawnPos = GetSquareWorldPos(square);
+                Addressables.InstantiateAsync(square.Name, spawnPos, Quaternion.identity, spawnSquare.transform).Completed +=
+                    (AsyncOperationHandle<GameObject> handle) => {
+                        if (handle.Status == AsyncOperationStatus.Succeeded) {
+                            square.SquareObj = handle.Result;
+                        }
+                    };
+            }
 
-            //重新生成等候方块
-            squaresOfHoldShape.Clear();
-            squaresOfHoldShape = RandSpawnShapeAndRender(GridManager.Hold);
-        }
-        else
-        {
-            squaresOfCurrentShape = RandSpawnShapeAndRender();
-        }
-    }
-
-
-    List<Square> RandSpawnShapeAndRender(string type = GridManager.Current)
-    {
-        //处理生成逻辑
-        var shapeData = shapeManager.GetRandomShape();
-        Vector2Int initGridIndex = type == GridManager.Current ? gridManager.gridTopCenter : gridManager.gridHoldCenter;
-        List<Square> squares = squareManager.GenerateSquaresForShape(shapeData.squareIndex, initGridIndex);
-        // 生成unity对象
-        foreach (var square in squares)
-        {
-            Vector3 spawnPos = GetSquareWorldPos(square);
-            Addressables.InstantiateAsync(square.Name, spawnPos, Quaternion.identity, spawnSquare.transform).Completed +=
-                (AsyncOperationHandle<GameObject> handle) =>
-                {
-                    if (handle.Status == AsyncOperationStatus.Succeeded)
-                    {
-                        square.SquareObj = handle.Result;
-                    }
-                };
+            return squares;
         }
 
-        return squares;
-    }
-
-    void RenderCurrentSquare(List<Square> squares)
-    {
-        foreach (var square in squares)
-        {
-            RenderSquare(square);
+        void RenderCurrentSquare(List<SquareEntity> squares) {
+            foreach (var square in squares) {
+                RenderSquare(square);
+            }
         }
-    }
-    
-    void RenderSquare(Square square)
-    {
-        GameObject squareObj = square.SquareObj as GameObject;
-        if (squareObj)
-        {
-            squareObj.transform.position = GetSquareWorldPos(square);
-        }
-    }
 
-    Vector3 GetSquareWorldPos(Square square)
-    {
-        return new Vector3(square.GridIndex.x * gridWidth, square.GridIndex.y * gridWidth, 0) + initPos;
+        void RenderSquare(SquareEntity square) {
+            GameObject squareObj = square.SquareObj as GameObject;
+            if (squareObj) {
+                squareObj.transform.position = GetSquareWorldPos(square);
+            }
+        }
+
+        Vector3 GetSquareWorldPos(SquareEntity square) {
+            return new Vector3(square.GridIndex.x * gridWidth, square.GridIndex.y * gridWidth, 0) + initPos;
+        }
     }
 }

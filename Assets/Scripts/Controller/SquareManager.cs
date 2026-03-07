@@ -1,28 +1,22 @@
 ﻿using System.Collections.Generic;
 using Custom.Tool;
 
-namespace Controller
-{
-    public class SquareManager
-    {
-        private readonly string[] squareNames = {"PurpleDotSquare", "OrangeSquare", "BlueStarSquare", "PurpleSquare", "BlueSquare", "GreenSquare", "LightBlueSquare"};
-        private string path = "Assets/Prefab/";
-        private string suffix = ".prefab";
-        
-        
-        
-        private string GetSquareName()
-        {
+namespace PGC.Controller {
+
+    public class SquareManager {
+
+        readonly string[] squareNames = { "PurpleDotSquare", "OrangeSquare", "BlueStarSquare", "PurpleSquare", "BlueSquare", "GreenSquare", "LightBlueSquare" };
+        string path = "Assets/Prefab/";
+        string suffix = ".prefab";
+
+        string GetSquareName() {
             int randIndex = UnityEngine.Random.Range(0, squareNames.Length);
-            return path+squareNames[randIndex]+suffix;
+            return path + squareNames[randIndex] + suffix;
         }
 
-
-        public void Move(Square square, MoveDirection shift)
-        {
+        public void Move(SquareEntity square, MoveDirection shift) {
             Int2 index = square.GridIndex;
-            switch (shift)
-            {
+            switch (shift) {
                 case MoveDirection.Left:
                     index.x--;
                     break;
@@ -37,12 +31,10 @@ namespace Controller
             }
             square.GridIndex = index;
         }
-        
-        public void Roate(Square square, RotateDirection turn)
-        {
+
+        public void Roate(SquareEntity square, RotateDirection turn) {
             Int2 index = square.GridIndex;
-            switch (turn)
-            {
+            switch (turn) {
                 case RotateDirection.Left:
                     index = new Int2(-index.y, index.x);
                     break;
@@ -54,16 +46,13 @@ namespace Controller
             }
             square.GridIndex = index;
         }
-        
-        public List<Square> GenerateSquaresForShape(Int2[] squareIndex, Int2 initGridIndex)
-        {
-            List<Square> squareList = new List<Square>();
+
+        public List<SquareEntity> GenerateSquaresForShape(Int2[] squareIndex, Int2 initGridIndex) {
+            List<SquareEntity> squareList = new List<SquareEntity>();
             string name = GetSquareName();
 
-            foreach (var index in squareIndex)
-            {
-                Square square = new Square()
-                {
+            foreach (var index in squareIndex) {
+                SquareEntity square = new SquareEntity() {
                     GridIndex = index + initGridIndex,
                     Name = name,
                 };
@@ -72,13 +61,11 @@ namespace Controller
 
             return squareList;
         }
-        
-        public List<Square> ChangeSquaresForShape(List<Square> squares, Int2 initGridIndex)
-        {
-            List<Square> squareList = new List<Square>();
 
-            foreach (var square in squares)
-            {
+        public List<SquareEntity> ChangeSquaresForShape(List<SquareEntity> squares, Int2 initGridIndex) {
+            List<SquareEntity> squareList = new List<SquareEntity>();
+
+            foreach (var square in squares) {
                 square.GridIndex += initGridIndex;
             }
             return squareList;
