@@ -65,6 +65,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 946111adb1da69d4fa0244a08f032274, type: 2}
   - {fileID: 11400000, guid: 2c4b49ff5a7f33b4a9a40f7a14fb2832, type: 2}
   - {fileID: 11400000, guid: 87b5d287a0c0d144ab4db2a72a93f0b2, type: 2}
+  - {fileID: 11400000, guid: 812e0d983b656154ca6be92cccd9c26a, type: 2}
   m_BuildSettings:
     m_LogResourceManagerExceptions: 1
     m_BundleBuildPath: Temp/com.unity.addressables/AssetBundles
@@ -105,6 +106,7 @@ MonoBehaviour:
     m_LabelNames:
     - default
     - Shape
+    - Square
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: d38041323beaa674e91f12da55ddfe6d, type: 2}

@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 3267960770500616447}
   - component: {fileID: 6997874961422344433}
   - component: {fileID: 469382187812324011}
+  - component: {fileID: 696917945298850322}
   m_Layer: 0
-  m_Name: GreenSquare
+  m_Name: Entity_Square_Green
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -138,3 +139,16 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &696917945298850322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7572004790301955412}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11c9c50418b04477b2b49c861e468066, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PGC.SquareEntity
+  id: 0
