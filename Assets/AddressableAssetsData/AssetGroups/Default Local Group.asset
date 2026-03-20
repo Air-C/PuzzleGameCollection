@@ -15,43 +15,8 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: a33f05b3c12c582489b0c73684167b04
   m_SerializeEntries:
-  - m_GUID: 08377d93b1a75ad49b207be3fa6d233b
-    m_Address: Assets/Prefab/LightBlueSquare.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 2b8b3bcd69c1b434d81640b7ef582142
-    m_Address: Assets/Prefab/PurpleSquare.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3250754a3f39b4b449f1e1c9c93789b5
-    m_Address: Assets/Prefab/BlueStarSquare.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 55ceb7bec569456479d0690ee7afe452
-    m_Address: Assets/Prefab/PurpleDotSquare.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 62f8e4eb9dd092b4a99bb4aedf649bbf
-    m_Address: Assets/Prefab/OrangeSquare.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 85f17c6ff91a09b4f8f39edc18c7f931
-    m_Address: Assets/Prefab/BlueSquare.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 864bf904f6a2fcd4d853df24657b1cf2
-    m_Address: Assets/Prefab/GreenSquare.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 9fd0dfb58fc58904ebac9925f4efe798
-    m_Address: Assets/Prefab/OShape.prefab
+  - m_GUID: c32867328ae95d842b29768ab1d20f3e
+    m_Address: GridSo
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
