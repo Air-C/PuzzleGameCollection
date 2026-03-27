@@ -3,47 +3,88 @@ using Custom.Tool;
 using Entities;
 using Entities.SO;
 using PGC;
+using PGC.ModelEvent.Data;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Controller
 {
     public class ShapeController
     {
+        private GameContext ctx;
+
+        public ShapeController(GameContext ctx)
+        {
+            this.ctx = ctx;
+        }
+
         
         public void SpawnShapeRandom(GameContext ctx)
         {
-            if (ctx.squareShape.GetSquares().Count > 0)
+            if (ctx.currentSquareShape.GetSquares().Count > 0)
             {
                 return;
             }
-            
-            ctx.assetModule.ShapeSoTryGetRandom(out SquareShapeSo shapeSo);
+
+            if (ctx.previewShape == null)
+            {
+                GetPreviewShapeSo();
+            }
+            SquareShapeSo shapeSo = ctx.previewShape;
             ctx.assetModule.SquareSoTryGetRandom(out SquareSo squareSo);
             Vector2Int initIndex = ctx.assetModule.gridSo.gridTopCenter;
-        
+            
             foreach (var offset in shapeSo.offsets)
             {
-
                 Vector2Int squareIndex = initIndex + offset;
+                if (ctx.grid.Get(squareIndex.x, squareIndex.y) != null)
+                {
+                    //GameOver!
+                    GameOverEvent gameOverEvent = new GameOverEvent();
+                    ctx.eventBus.Publish(gameOverEvent);
+                    Debug.Log("Game Over!");
+                    return;
+                }
+                
                 SquareEntity square = new SquareEntity(squareIndex.x, squareIndex.y);
                 square.SquareObj = UnityEngine.Object.Instantiate(squareSo.prefab, ctx.grid.GetWorldPositionByIndex(squareIndex), Quaternion.identity);
+                if (squareSo.score != 0)
+                {
+                    square.Score = squareSo.score;
+                }
                 if (offset.x == 0 && offset.y == 0)
                 {
-                    ctx.squareShape.AddSquaresFirst(square);
+                    ctx.currentSquareShape.AddSquaresFirst(square);
                 }
                 else
                 {
-                    ctx.squareShape.AddSquare(square);
+                    ctx.currentSquareShape.AddSquare(square);
                 }
             }
-            
-            
+            ResetShapePreview();
+        }
+
+        public void ResetShapePreview()
+        {
+            ctx.previewShape = null;
+            GetPreviewShapeSo();
+            PreviewShapeChangeEvent evt = new PreviewShapeChangeEvent();
+            if (ctx.previewShape == null)
+            {
+                return;
+            }
+            evt.shapeType = ctx.previewShape.type;
+            ctx.assetModule.GetShapePreviewSprite(evt.shapeType,out evt.shapePreviewSprite);
+            ctx.eventBus.Publish(evt);
+        }     
+        
+        public void GetPreviewShapeSo()
+        {
+            ctx.assetModule.ShapeSoTryGetRandom(out ctx.previewShape);
         }
 
         public void ShapeHorizontalMove(int horizontalValue,GameContext ctx)
         {
-            List<SquareEntity> squares = ctx.squareShape.GetSquares();
+            List<SquareEntity> squares = ctx.currentSquareShape.GetSquares();
             foreach (var square in squares)
             {
                 Vector2Int newIndex = ConstantTool.GetNewIndexOfHorizontalMove(square.X, square.Y, horizontalValue);
@@ -54,7 +95,7 @@ namespace Controller
 
         public void ShapeDown(int verticalValue,GameContext ctx)
         {
-            List<SquareEntity> squares = ctx.squareShape.GetSquares();
+            List<SquareEntity> squares = ctx.currentSquareShape.GetSquares();
             foreach (var square in squares)
             {
                 Vector2Int newIndex = ConstantTool.GetNewIndexOfVerticalMove(square.X, square.Y,verticalValue);
@@ -70,7 +111,7 @@ namespace Controller
             {
                 return;
             }
-            List<SquareEntity> squares = ctx.squareShape.GetSquares();
+            List<SquareEntity> squares = ctx.currentSquareShape.GetSquares();
             SquareEntity pivotSquare = null;
             foreach (var square in squares)
             {

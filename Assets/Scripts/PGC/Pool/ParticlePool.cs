@@ -10,11 +10,13 @@ namespace PGC.Pool
         List<GameObject> pool = new List<GameObject>();
         List<GameObject> active = new ();
         GameObject poolManager;
+        private GameContext ctx;
 
         public ParticlePool(GameContext ctx)
         {
+            this.ctx = ctx;
             int size = ctx.assetModule.poolSettings.particlePoolSize;
-            GameObject particlePrefab = ctx.assetModule.DestroyParticleSystemPrefab;
+            GameObject particlePrefab = ctx.assetModule.destroyParticleSystemPrefab;
             poolManager = Object.Instantiate(ctx.assetModule.poolSettings.poolManager);
 
             for (int i = 0; i < size; i++)
@@ -43,7 +45,7 @@ namespace PGC.Pool
             ps.Play();
         }
 
-        public IEnumerator DeactiveParticle(GameContext ctx)
+        public IEnumerator DeactivateParticle()
         {
             while (active.Count > 0)
             {
@@ -69,7 +71,27 @@ namespace PGC.Pool
                 yield return null;
             }
             ctx.hasActiveParticles = false;
+        }
 
+        public void DeactivateParticlesForce()
+        {
+            if (active.Count > 0)
+            {
+                List<GameObject> remove = new List<GameObject>();
+                foreach (var particleObj in active)
+                {
+                    remove.Add(particleObj);
+                }
+                foreach (var particleObj in remove)
+                {
+                    particleObj.SetActive(false);
+                    active.Remove(particleObj);
+                    pool.Add(particleObj);
+                }
+                
+                Debug.Log("Deactive particle force");
+            }
+            ctx.hasActiveParticles = false;
         }
         
     }

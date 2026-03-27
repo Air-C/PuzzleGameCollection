@@ -10,6 +10,7 @@ namespace Entities.SO
     {
         public SquareColorEnum color;
         public GameObject prefab;
-        
+        public int score;
+        public ItemAbilityType abilityType = ItemAbilityType.None;
     }
 }

@@ -3,8 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using Entities.SO;
 using PGC.Entities.Grid.SO;
+using PGC.Enum;
+using PGC.ModuleInventory;
+using PGC.ModuleInventory.SO;
 using PGC.Pool.SO;
 using PGC.Settings;
+using PGC.System;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -17,15 +21,19 @@ namespace PGC.ModuleAsset
         readonly List<SquareSo> squareSoList = new ();
         readonly List<SquareShapeSo> squareShapeSoList = new ();
         public GridSo gridSo;
-        public GameObject DestroyParticleSystemPrefab;
+        public GameObject destroyParticleSystemPrefab;
+        public Dictionary<ShapeTypeEnum, Sprite> shapePreviewPrefabDictionary = new ();
+        public Dictionary<PopupEnum, GameObject> popupPrefabs = new ();
         public PoolSettings poolSettings;
         public SystemSettings sysSettings;
+        public MissionSetting currentMissionSetting;
+        public Dictionary<ItemAbilityType, ItemEntity> itemTable = new ();
         
         public IEnumerator LoadAllAssets()
         {
             yield return LoadAssets<SquareSo>("Square", (squareList) =>
             {
-                squareSoList.AddRange(squareList);
+                squareSoList.AddRange(squareList);  
             });
 
             yield return LoadAssets<SquareShapeSo>("Shape", (shapeList) =>
@@ -41,7 +49,7 @@ namespace PGC.ModuleAsset
 
             yield return LoadAsset<GameObject>("DestroyParticle", (particle) =>
             {
-                DestroyParticleSystemPrefab = particle;
+                destroyParticleSystemPrefab = particle;
             });
             
             yield return LoadAsset<PoolSettings>("ParticlePoolSettings", (settings) =>
@@ -52,6 +60,51 @@ namespace PGC.ModuleAsset
             yield return LoadAsset<SystemSettings>("PGCSettings", (settings) =>
             {
                 sysSettings = settings;
+                currentMissionSetting = new MissionSetting();
+                currentMissionSetting.missionID = 1;
+                currentMissionSetting.moveSystemMoveInterval = sysSettings.moveSystemMoveInterval;
+                currentMissionSetting.moveSystemAutoMoveInterval = sysSettings.moveSystemAutoMoveInterval;
+            });
+            
+            yield return LoadAsset<ItemTable>("ItemTable", (table) =>
+            {
+                foreach (var itemEntity in table.itemList)
+                {
+                    itemTable.Add(itemEntity.AbilityType, itemEntity);
+                }
+            });
+            
+            yield return LoadAssets<GameObject>("Popup", (popups) =>
+            {
+                foreach (var popup in popups)
+                {
+                    bool exist = global::System.Enum.TryParse<PopupEnum>(popup.name, out PopupEnum popupEnum);
+                    if (exist)
+                    {
+                        popupPrefabs.Add(popupEnum, popup);
+                    }
+                    else
+                    {
+                        Debug.LogError($"{popup.name} is not define");
+                    }
+                }
+            });
+
+            yield return LoadAssets<Sprite>("ShapeImage", (shapeImagePrefabs) =>
+            {
+                foreach (var sprite in shapeImagePrefabs)
+                {
+                    bool exist = global::System.Enum.TryParse<ShapeTypeEnum>(sprite.name, out ShapeTypeEnum shapeTypeEnum);
+                    if (exist)
+                    {
+                        shapePreviewPrefabDictionary.Add(shapeTypeEnum, sprite);
+                    }
+                    else
+                    {
+                        Debug.LogError($"{sprite.name} is not define");
+                    }
+                    
+                }
             });
         }
         
@@ -102,6 +155,28 @@ namespace PGC.ModuleAsset
             }
             int index = Random.Range(0, squareSoList.Count);
             squareSo = squareSoList[index];
+            return true;
+        }
+
+        public bool GetPopup(PopupEnum type, out GameObject popup)
+        {
+            bool exist = popupPrefabs.TryGetValue(type, out popup);
+            if (!exist)
+            {
+                Debug.LogError($"{type.ToString()} is not Loaded");
+                return false;
+            }
+            return true;
+        }
+
+        public bool GetShapePreviewSprite(ShapeTypeEnum type, out Sprite shapePreviewSprite)
+        {
+            bool exist = shapePreviewPrefabDictionary.TryGetValue(type, out shapePreviewSprite);
+            if (!exist)
+            {
+                Debug.LogError($"{type.ToString()} is not Loaded");
+                return false;
+            }
             return true;
         }
         

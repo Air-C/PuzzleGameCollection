@@ -3,7 +3,9 @@ using System.Linq;
 using Custom.Tool;
 using Entities;
 using PGC;
+using PGC.Enum;
 using PGC.ModelEvent.Data;
+using PGC.ModuleClearLine.Model;
 using UnityEngine;
 
 namespace Controller
@@ -13,13 +15,13 @@ namespace Controller
 
         public bool IsCanHorizontalMove(GameContext ctx)
         {
-            List<SquareEntity> squares = ctx.squareShape.GetSquares();
+            List<SquareEntity> squares = ctx.currentSquareShape.GetSquares();
             if (squares.Count == 0)
             {
                 return false;
             }
             int horizontalValue = ctx.inputModule.horizontalMove.value;
-            foreach (var square in ctx.squareShape.GetSquares())
+            foreach (var square in ctx.currentSquareShape.GetSquares())
             {
                 Vector2Int newIndex = ConstantTool.GetNewIndexOfHorizontalMove(square.X, square.Y, horizontalValue);
                 if (newIndex.x < 0 || newIndex.x >= ctx.grid.GridBorder.x || ctx.grid.GridIndexIsNotNull(newIndex.x,newIndex.y))
@@ -32,7 +34,7 @@ namespace Controller
         
         public bool IsCanDown(GameContext ctx, int verticalValue = 0)
         {
-            List<SquareEntity> squares = ctx.squareShape.GetSquares();
+            List<SquareEntity> squares = ctx.currentSquareShape.GetSquares();
 
             if (verticalValue == 0)
             {
@@ -43,7 +45,7 @@ namespace Controller
                 return false;
             }
             
-            foreach (var square in ctx.squareShape.GetSquares())
+            foreach (var square in ctx.currentSquareShape.GetSquares())
             {
                 Vector2Int newIndex = ConstantTool.GetNewIndexOfVerticalMove(square.X, square.Y, verticalValue);
                 if (newIndex.y < 0 || ctx.grid.GridIndexIsNotNull(newIndex.x,newIndex.y))
@@ -57,13 +59,13 @@ namespace Controller
         
         public bool IsCanRotate(GameContext ctx)
         {
-            List<SquareEntity> squares = ctx.squareShape.GetSquares();
+            List<SquareEntity> squares = ctx.currentSquareShape.GetSquares();
             if (squares.Count == 0)
             {
                 return false;
             }
             SquareEntity pivotSquare = null;
-            foreach (var square in ctx.squareShape.GetSquares())
+            foreach (var square in ctx.currentSquareShape.GetSquares())
             {
                 if (pivotSquare == null)
                 {
@@ -87,19 +89,17 @@ namespace Controller
 
         public void LockSquares(GameContext ctx)
         {
-            Debug.Log($"CurrentShapeIsReachedBottom:{ctx.CurrentShapeIsReachedBottom}");
             if (!ctx.CurrentShapeIsReachedBottom)
             {
                 return;
             }
             
-            foreach (var squareEntity in ctx.squareShape.GetSquares())
+            foreach (var squareEntity in ctx.currentSquareShape.GetSquares())
             {
-                ctx.grid.Grid[squareEntity.X, squareEntity.Y] = squareEntity;
                 ctx.grid.Set(squareEntity.X, squareEntity.Y, squareEntity);
                 ctx.NewReacdhedSquare.Add(squareEntity);
             }
-            ctx.squareShape.ClearSquares();
+            ctx.currentSquareShape.ClearSquares();
             ctx.CurrentShapeIsReachedBottom = false;
         }
 
@@ -130,45 +130,15 @@ namespace Controller
 
             if (clearRows.Count > 0)
             {
-                ClearRow(clearRows,ctx);
+                WaitForClearModel waitForClearModel = new WaitForClearModel();
+                waitForClearModel.clearSquareType = ClearSquareType.Row;
+                waitForClearModel.waitForClearRows = clearRows;
+                ctx.waitForClearModelQueue.Enqueue(waitForClearModel);
             }
             List<int> lines = new List<int>(clearRows);
             LineClearedEvent e = new LineClearedEvent(lines);
             ctx.eventBus.Publish(e);
             ctx.NewReacdhedSquare.Clear();
-        }
-
-        void ClearRow(HashSet<int> rows, GameContext ctx)
-        {
-            int minRow = rows.Min();
-            foreach (var row in rows)
-            {
-                for (int x = 0; x < ctx.grid.GridBorder.x; x++)
-                {
-                    //todo 对象销毁，特性等
-                    //待销毁方块
-                    ctx.SquaresWaitForDestory.Add(ctx.grid.Get(x,row));
-                    ctx.grid.ClearCell(x,row);
-                }
-            }
-
-            // 棋盘数据下移动
-            for (int x = 0; x < ctx.grid.GridBorder.x; x++)
-            {
-                for (int y = minRow; y < ctx.grid.GridBorder.y; y++)
-                {
-                    int newRow = y + rows.Count;
-                    if (newRow < ctx.grid.GridBorder.y)
-                    {
-                        ctx.grid.Set(x,y, ctx.grid.Get(x,y+rows.Count));
-                        ctx.grid.Get(x,y)?.RestIndex(x,y);
-                    }
-                    else
-                    {
-                        ctx.grid.Set(x,y, null);
-                    }
-                }
-            }
         }
         
     }

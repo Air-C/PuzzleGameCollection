@@ -6,54 +6,51 @@ namespace PGC.ModuleMove
 {
     public class MoveSystem
     {
-        ShapeController shapeController = new ShapeController();
+        ShapeController shapeController;
         GridController gridController = new GridController();
         
-        private float moveInterval;
-        private float autoMoveInterval;
         private float sinceLastMoveTime = 0.0f;
         private float sinceLastAutoMoveTime = 0.0f;
+        private GameContext ctx;
 
         public MoveSystem(GameContext ctx)
         {
-            moveInterval = ctx.assetModule.sysSettings.moveSystemMoveInterval;
-            autoMoveInterval = ctx.assetModule.sysSettings.moveSystemAutoMoveInterval;
-            Debug.Log($"System moveInterval: {moveInterval}");
-            Debug.Log($"System autoMoveInterval: {autoMoveInterval}");
+            this.ctx = ctx;
+            shapeController = new ShapeController(ctx);
+            Debug.Log($"System moveInterval: {ctx.assetModule.sysSettings.moveSystemMoveInterval}");
+            Debug.Log($"System autoMoveInterval: {ctx.assetModule.sysSettings.moveSystemAutoMoveInterval}");
         }
         
-        public void Update(GameContext ctx)
+        public void Update()
         {
             ctx.inputModule.Update(Time.deltaTime);
-
         }
 
-        public void Tick(GameContext ctx)
+        public void Tick()
         {
             sinceLastMoveTime += ctx.assetModule.sysSettings.gameSystemTickTime;
             sinceLastAutoMoveTime += ctx.assetModule.sysSettings.gameSystemTickTime;
-            if (sinceLastAutoMoveTime >= autoMoveInterval)
+            if (sinceLastAutoMoveTime >= ctx.assetModule.sysSettings.moveSystemAutoMoveInterval)
             {
-                MoveDown(ctx,-1);
-                sinceLastAutoMoveTime -= autoMoveInterval;
+                MoveDown(-1);
+                sinceLastAutoMoveTime -= ctx.assetModule.sysSettings.moveSystemAutoMoveInterval;
             }
-            if (sinceLastMoveTime < moveInterval)
+            if (sinceLastMoveTime < ctx.assetModule.sysSettings.moveSystemMoveInterval)
             {
                 return;
             }
             if (ctx.inputModule.verticalMove.value != 0)
             {
-                MoveDown(ctx);
+                MoveDown();
             }
             
             if (ctx.inputModule.horizontalMove.value != 0 && gridController.IsCanHorizontalMove(ctx))
             {
-                if (ctx.inputModule.holdTimer == 0 || ctx.inputModule.holdTimer >= ctx.inputModule.horizontalMoveDelay)
+                if (ctx.inputModule.holdTimer == 0 || ctx.inputModule.holdTimer >= ctx.assetModule.sysSettings.horizontalMoveDelay)
                 {
                     shapeController.ShapeHorizontalMove(ctx.inputModule.horizontalMove.value,ctx);
                 }
-                Debug.Log($"holdTimer: {ctx.inputModule.holdTimer}；value: {ctx.inputModule.horizontalMove.value}");
-                ctx.inputModule.holdTimer += moveInterval;
+                ctx.inputModule.holdTimer += ctx.assetModule.sysSettings.moveSystemMoveInterval;
             }
             
             if (ctx.inputModule.rotate.value != 0 && gridController.IsCanRotate(ctx))
@@ -61,10 +58,10 @@ namespace PGC.ModuleMove
                 shapeController.ShapeRotate(ctx.inputModule.rotate.value,ctx);
             }
             ctx.inputModule.RestInput();
-            sinceLastMoveTime -= moveInterval;
+            sinceLastMoveTime -= ctx.assetModule.sysSettings.moveSystemMoveInterval;
         }
         
-        void MoveDown(GameContext ctx, int verticalMoveValue = 0)
+        void MoveDown(int verticalMoveValue = 0)
         {
             if (verticalMoveValue == 0)
             {

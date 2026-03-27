@@ -12,10 +12,8 @@ namespace PGC.ModuleInput
         public InputModel<int> verticalMove = new InputModel<int>();
         public InputModel<int> rotate = new InputModel<int>();
 
-        public float horizontalMoveDelay = 0.5f;
         public float holdTimer = 0;
         
-        public int frameCount = 0;
         
 
         public InputModule()
@@ -65,9 +63,6 @@ namespace PGC.ModuleInput
                 rotate.value = 1;
                 rotate.status = rotateStatus;
             }
-            
-            Debug.Log($"Frame counter: {frameCount}; holdTimer:{holdTimer} ; horizontalMove:{horizontalMove.value}");
-            frameCount++;
         }
 
         static InputStatus GetStatus(InputAction action)
