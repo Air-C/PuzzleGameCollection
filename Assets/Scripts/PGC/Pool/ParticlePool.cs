@@ -13,10 +13,12 @@ namespace PGC.Pool
     public class ParticlePool
     {
         
-        Stack<PoolParticle> pool = new ();
-        Stack<PoolParticle> active = new ();
+        Queue<PoolParticle> pool = new ();
+        Queue<PoolParticle> active = new ();
         GameObject poolManager;
         private GameContext ctx;
+        
+        bool isDeactivateRunning = false;
 
         public ParticlePool(GameContext ctx)
         {
@@ -28,7 +30,7 @@ namespace PGC.Pool
             for (int i = 0; i < size; i++)
             {
                 obj = Object.Instantiate(particlePrefab, poolManager.transform);
-                pool.Push(new PoolParticle()
+                pool.Enqueue(new PoolParticle()
                 {
                     particle = obj,
                     ps = obj.GetComponent<ParticleSystem>(),
@@ -45,35 +47,43 @@ namespace PGC.Pool
                 //todo 扩容
                 return;
             }
-            PoolParticle particle = pool.Pop();
+            PoolParticle particle = pool.Dequeue();
             particle.particle.transform.position = position;
-            active.Push(particle);
+            active.Enqueue(particle);
             particle.particle.SetActive(true);
             particle.ps.Play();
         }
 
         public IEnumerator DeactivateParticle()
         {
-            PoolParticle particle = active.Peek();
-            var ps = particle.ps;
-            while (ps.isEmitting || ps.particleCount > 0)
+            if (isDeactivateRunning)
             {
-                yield return null;
+                yield break;
+            }
+            if (isDeactivateRunning == false)
+            {
+                isDeactivateRunning = true;
             }
             while (active.Count > 0)
             {
-                PoolParticle removePar = active.Pop();
-                removePar.particle.SetActive(false);
-                pool.Push(removePar);
+                PoolParticle particle = active.Peek();
+                var ps = particle.ps;
+                while (ps.isEmitting || ps.particleCount > 0)
+                {
+                    yield return null;
+                }
+                particle.particle.SetActive(false);
+                pool.Enqueue(active.Dequeue());
             }
             ctx.hasActiveParticles = false;
+            isDeactivateRunning = false;
         }
 
         public void DeactivateParticlesForce()
         {
             while (active.Count > 0)
             {
-                pool.Push(active.Pop());
+                pool.Enqueue(active.Dequeue());
             }
             ctx.hasActiveParticles = false;
         }
