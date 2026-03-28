@@ -78,7 +78,13 @@ namespace PGC.ModuleClearLine
                     break;
             }
             ClearSquares(indexs);
-
+            //test
+            List<ItemAbilityType> items = new ();
+            items.Add(ItemAbilityType.ClearRow);
+            items.Add(ItemAbilityType.Boom3);
+            
+            AddItemEvent evt = new(items);
+            ctx.eventBus.Publish<AddItemEvent>(evt);
         }
 
         void ClearSquares(List<Vector2Int> indexes)

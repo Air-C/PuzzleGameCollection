@@ -4,11 +4,17 @@ using UnityEngine;
 
 namespace PGC.Pool
 {
+    class PoolParticle
+    {
+        public GameObject particle;
+        public ParticleSystem ps;
+    }
+    
     public class ParticlePool
     {
         
-        List<GameObject> pool = new List<GameObject>();
-        List<GameObject> active = new ();
+        Stack<PoolParticle> pool = new ();
+        Stack<PoolParticle> active = new ();
         GameObject poolManager;
         private GameContext ctx;
 
@@ -18,10 +24,15 @@ namespace PGC.Pool
             int size = ctx.assetModule.poolSettings.particlePoolSize;
             GameObject particlePrefab = ctx.assetModule.destroyParticleSystemPrefab;
             poolManager = Object.Instantiate(ctx.assetModule.poolSettings.poolManager);
-
+            GameObject obj;
             for (int i = 0; i < size; i++)
             {
-                pool.Add(Object.Instantiate(particlePrefab, poolManager.transform));
+                obj = Object.Instantiate(particlePrefab, poolManager.transform);
+                pool.Push(new PoolParticle()
+                {
+                    particle = obj,
+                    ps = obj.GetComponent<ParticleSystem>(),
+                });
             }
         }
 
@@ -34,62 +45,35 @@ namespace PGC.Pool
                 //todo 扩容
                 return;
             }
-            Debug.Log($"Pool Particle:{pool[0]}");
-            GameObject particle = pool[0];
-            Debug.Log($"Pool Particle:{particle}");
-            particle.transform.position = position;
-            active.Add(particle);
-            pool.RemoveAt(0);
-            particle.SetActive(true);
-            var ps = particle.GetComponent<ParticleSystem>();
-            ps.Play();
+            PoolParticle particle = pool.Pop();
+            particle.particle.transform.position = position;
+            active.Push(particle);
+            particle.particle.SetActive(true);
+            particle.ps.Play();
         }
 
         public IEnumerator DeactivateParticle()
         {
+            PoolParticle particle = active.Peek();
+            var ps = particle.ps;
+            while (ps.isEmitting || ps.particleCount > 0)
+            {
+                yield return null;
+            }
             while (active.Count > 0)
             {
-                List<GameObject> remove = new List<GameObject>();
-                foreach (var particleObj in active)
-                {
-                    var ps = particleObj.GetComponent<ParticleSystem>();
-                    Debug.Log($"Deactive particle isEmitting{ps.isEmitting}");
-                    Debug.Log($"Deactive particle particleCount{ps.particleCount}");
-                    if (!ps.isEmitting && ps.particleCount == 0)
-                    {
-                        remove.Add(particleObj);
-                    }
-                }
-                foreach (var particleObj in remove)
-                {
-                    particleObj.SetActive(false);
-                    active.Remove(particleObj);
-                    pool.Add(particleObj);
-                }
-                
-                Debug.Log("Deactive particle once time");
-                yield return null;
+                PoolParticle removePar = active.Pop();
+                removePar.particle.SetActive(false);
+                pool.Push(removePar);
             }
             ctx.hasActiveParticles = false;
         }
 
         public void DeactivateParticlesForce()
         {
-            if (active.Count > 0)
+            while (active.Count > 0)
             {
-                List<GameObject> remove = new List<GameObject>();
-                foreach (var particleObj in active)
-                {
-                    remove.Add(particleObj);
-                }
-                foreach (var particleObj in remove)
-                {
-                    particleObj.SetActive(false);
-                    active.Remove(particleObj);
-                    pool.Add(particleObj);
-                }
-                
-                Debug.Log("Deactive particle force");
+                pool.Push(active.Pop());
             }
             ctx.hasActiveParticles = false;
         }
