@@ -3,12 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using Entities;
 using PGC.Entities.Grid;
+using PGC.Enum;
 using PGC.ModelEvent;
 using PGC.ModelEvent.Data;
 using PGC.ModuleAsset;
 using PGC.ModuleInput;
 using PGC.ModuleInventory;
 using PGC.ModuleInventory.SO;
+using PGC.ModuleItem.Model;
 using PGC.Pool;
 using PGC.System;
 using PGC.VFX;
@@ -43,9 +45,13 @@ namespace PGC
             ctx.saveData = saveSystem.SaveData;
             ctx.inventoryLocalData = new InventoryLocalData();
             ObjectRequireCheck();
-            foreach (var item in itemsBar)
+            foreach (var itemBar in itemsBar)
             {
-                ctx.itemsBar.Add((false,item));
+                ctx.itemsBar.Add(new ItemBarModel()
+                {
+                    type = ItemAbilityType.None,
+                    itemBar = itemBar
+                });
             }
             ctx.shapePreviewBar = shapePreviewBar;
         }

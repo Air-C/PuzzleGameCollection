@@ -13,28 +13,24 @@ namespace PGC.VFX
             this.ctx = ctx;
         }
         
-        public void OnLineCleared(LineClearedEvent e)
+        public void OnLineCleared(SquareClearedEvent e)
         {
-            foreach (var line in e.lines)
+            foreach (var index in e.indexes)
             {
-                PlayEffect(line);
+                PlayEffect(index);
             }
             ctx.hasActiveParticles = true;
         }
 
-        void PlayEffect(int line)
+        void PlayEffect(Vector2Int index)
         {
-            for (int x = 0; x < ctx.grid.GridBorder.x; x++)
-            {
-                Vector3 pos = ctx.grid.GetWorldPositionByIndex(new Vector2Int(x, line));
-                ctx.particlePool.ActiveParticle(pos);
-            }
-            
+            Vector3 pos = ctx.grid.GetWorldPositionByIndex(index);
+            ctx.particlePool.ActiveParticle(pos);
         }
 
         public void Dispose()
         {
-            ctx.eventBus.Unsubscribe<LineClearedEvent>(OnLineCleared);
+            ctx.eventBus.Unsubscribe<SquareClearedEvent>(OnLineCleared);
         }
     }
 }

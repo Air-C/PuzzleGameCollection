@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Custom.Tool;
 using Entities;
 using PGC.Enum;
 using PGC.ModelEvent.Data;
-using PGC.Pool;
+using PGC.ModuleItem.Model;
 using PGC.Popup;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -76,21 +76,15 @@ namespace PGC.System
         
         public static void RenderDestroySquare(GameContext ctx)
         {
-            if (ctx.SquaresWaitForDestory.squares.Count == 0)
+            if (ctx.squaresWaitForDestroy.squares.Count == 0)
             {
                 return;
             }
-            foreach (var square in ctx.SquaresWaitForDestory.squares)
+            foreach (var square in ctx.squaresWaitForDestroy.squares)
             {
                 Object.Destroy(square.SquareObj);
             }
-
-            ctx.SquaresWaitForDestory.isRender = true;
-            if (ctx.SquaresWaitForDestory.AllIsCheck())
-            {
-                ctx.SquaresWaitForDestory.squares.Clear();
-            }
-
+            ctx.squaresWaitForDestroy.squares.Clear();
             foreach (var square in ctx.grid.Grid)
             {
                 if (square != null)
@@ -105,9 +99,9 @@ namespace PGC.System
         public static void RenderShapePos(GameContext ctx)
         {
             List<SquareEntity> squares = ctx.currentSquareShape.GetSquares();
-            if (ctx.NewReacdhedSquare.Count > 0)
+            if (ctx.newReachedSquare.Count > 0)
             {
-                squares.AddRange(ctx.NewReacdhedSquare);
+                squares.AddRange(ctx.newReachedSquare);
             }
             if (squares.Count == 0)
             {
@@ -125,6 +119,48 @@ namespace PGC.System
         public void OnResetShapePreview(PreviewShapeChangeEvent e)
         {
             ctx.shapePreviewBar.GetComponent<Image>().sprite = e.shapePreviewSprite;
+        }
+
+        public void OnItemBarChanged(ItemBarChangeEvent e)
+        {
+            ItemBarModel waitForRenderBar = null;
+            foreach (var itemBar in ctx.itemsBar)
+            {
+                if (itemBar.type == e.type)
+                {
+                    waitForRenderBar = itemBar;
+                }
+            }
+            if (waitForRenderBar == null)
+            {
+                Debug.LogError($"ItemBarChanged event type:{e.type} not found");
+                return;
+            }
+
+            if (waitForRenderBar.itemInstance == null)
+            {
+                waitForRenderBar.itemInstance = Object.Instantiate(e.itemPrefab, waitForRenderBar.itemBar.transform);
+                waitForRenderBar.countInstance = waitForRenderBar.itemInstance.transform.GetChild(0);
+                Button btn = waitForRenderBar.itemInstance.GetComponent<Button>();
+                btn.onClick.AddListener(() =>
+                {
+                    ctx.eventBus.Publish<ItemEffectEvent>(new ItemEffectEvent()
+                    {
+                        type = waitForRenderBar.type,
+                    });
+                });
+            }
+            else if (waitForRenderBar.count == 0)
+            {
+                Object.Destroy(waitForRenderBar.itemInstance.gameObject);
+                waitForRenderBar.itemInstance = null;
+                waitForRenderBar.countInstance = null;
+                waitForRenderBar.type = ItemAbilityType.None;
+                return;
+            }
+            TextMeshProUGUI tmp = waitForRenderBar.countInstance.GetComponent<TextMeshProUGUI>();
+            tmp.text = waitForRenderBar.count.ToString();
+            
         }
     }
 }

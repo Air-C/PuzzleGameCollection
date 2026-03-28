@@ -1,5 +1,6 @@
 ﻿using System;
 using PGC.Enum;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -14,6 +15,10 @@ namespace PGC.ModuleInventory
         private string description;
         [SerializeField]
         private ItemAbilityType abilityType;
+        [SerializeField]
+        private GameObject prefab;
+
+        public GameObject Prefab => prefab;
 
         public string Name
         {

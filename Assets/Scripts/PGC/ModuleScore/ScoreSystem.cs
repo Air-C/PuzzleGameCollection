@@ -10,15 +10,15 @@
 
         public void ScoreClearSquare()
         {
-            if (ctx.SquaresWaitForDestory.squares.Count == 0 || ctx.SquaresWaitForDestory.isScored)
+            if (ctx.squaresWaitForDestroy.squares.Count == 0 || ctx.squaresWaitForDestroy.isScored)
             {
                 return;
             }
-            foreach (var square in ctx.SquaresWaitForDestory.squares)
+            foreach (var square in ctx.squaresWaitForDestroy.squares)
             {
                 ctx.totalScore += square.Score;
             }
-            ctx.SquaresWaitForDestory.isScored = true;
+            ctx.squaresWaitForDestroy.isScored = true;
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Linq;
 using Custom.Tool;
 using Entities;
+using Entities.SO;
 using PGC;
 using PGC.Enum;
 using PGC.ModelEvent.Data;
@@ -12,8 +13,13 @@ namespace Controller
 {
     public class GridController
     {
+        private GameContext ctx;
+        public GridController(GameContext ctx)
+        {
+            this.ctx = ctx;
+        }
 
-        public bool IsCanHorizontalMove(GameContext ctx)
+        public bool IsCanHorizontalMove()
         {
             List<SquareEntity> squares = ctx.currentSquareShape.GetSquares();
             if (squares.Count == 0)
@@ -32,7 +38,7 @@ namespace Controller
             return true;
         }
         
-        public bool IsCanDown(GameContext ctx, int verticalValue = 0)
+        public bool IsCanDown( int verticalValue = 0)
         {
             List<SquareEntity> squares = ctx.currentSquareShape.GetSquares();
 
@@ -50,14 +56,14 @@ namespace Controller
                 Vector2Int newIndex = ConstantTool.GetNewIndexOfVerticalMove(square.X, square.Y, verticalValue);
                 if (newIndex.y < 0 || ctx.grid.GridIndexIsNotNull(newIndex.x,newIndex.y))
                 {
-                    ctx.CurrentShapeIsReachedBottom = true;
+                    ctx.currentShapeIsReachedBottom = true;
                     return false;
                 }
             }
             return true;
         }
         
-        public bool IsCanRotate(GameContext ctx)
+        public bool IsCanRotate()
         {
             List<SquareEntity> squares = ctx.currentSquareShape.GetSquares();
             if (squares.Count == 0)
@@ -80,16 +86,16 @@ namespace Controller
                 }
                 if (newIndex.y < 0 || ctx.grid.GridIndexIsNotNull(newIndex.x,newIndex.y ))
                 {
-                    ctx.CurrentShapeIsReachedBottom = true;
+                    ctx.currentShapeIsReachedBottom = true;
                     return false;
                 }
             }
             return true;
         }
 
-        public void LockSquares(GameContext ctx)
+        public void LockSquares()
         {
-            if (!ctx.CurrentShapeIsReachedBottom)
+            if (!ctx.currentShapeIsReachedBottom)
             {
                 return;
             }
@@ -97,21 +103,21 @@ namespace Controller
             foreach (var squareEntity in ctx.currentSquareShape.GetSquares())
             {
                 ctx.grid.Set(squareEntity.X, squareEntity.Y, squareEntity);
-                ctx.NewReacdhedSquare.Add(squareEntity);
+                ctx.newReachedSquare.Add(squareEntity);
             }
             ctx.currentSquareShape.ClearSquares();
-            ctx.CurrentShapeIsReachedBottom = false;
+            ctx.currentShapeIsReachedBottom = false;
         }
 
-        public void CheckIsFullAndClear(GameContext ctx)
+        public void CheckIsFullAndClear()
         {
-            if (ctx.NewReacdhedSquare.Count == 0)
+            if (ctx.newReachedSquare.Count == 0)
             {
                 return;
             }
             
             HashSet<int> clearRows = new HashSet<int>();
-            foreach (var squareEntity in ctx.NewReacdhedSquare)
+            foreach (var squareEntity in ctx.newReachedSquare)
             {
                 bool isFUll = true;
                 for (int i = 0; i < ctx.grid.GridBorder.x; i++)
@@ -130,16 +136,14 @@ namespace Controller
 
             if (clearRows.Count > 0)
             {
-                WaitForClearModel waitForClearModel = new WaitForClearModel();
-                waitForClearModel.clearSquareType = ClearSquareType.Row;
-                waitForClearModel.waitForClearRows = clearRows;
-                ctx.waitForClearModelQueue.Enqueue(waitForClearModel);
+                WaitForClearEvent waitForClearEvent = new WaitForClearEvent();
+                waitForClearEvent.clearSquareType = ClearSquareType.Row;
+                waitForClearEvent.waitForClearRows = clearRows;
+                ctx.eventBus.Publish(waitForClearEvent);
             }
-            List<int> lines = new List<int>(clearRows);
-            LineClearedEvent e = new LineClearedEvent(lines);
-            ctx.eventBus.Publish(e);
-            ctx.NewReacdhedSquare.Clear();
+            ctx.newReachedSquare.Clear();
         }
+        
         
     }
 }

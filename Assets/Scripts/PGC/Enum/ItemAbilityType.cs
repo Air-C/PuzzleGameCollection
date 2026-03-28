@@ -7,5 +7,6 @@
         Boom3,
         ClearRow,
         ClearColumn,
+        AddRow1,
     }
 }

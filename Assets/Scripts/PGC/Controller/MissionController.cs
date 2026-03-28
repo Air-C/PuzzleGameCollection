@@ -20,7 +20,7 @@ namespace Controller
         {
             this.ctx = ctx;
             shapeController = new ShapeController(ctx);
-            gridController = new GridController();
+            gridController = new GridController(ctx);
             foreach (var missionSetting in ctx.assetModule.sysSettings.missionSettings)
             {
                 missionSettings.Add(missionSetting.missionID, missionSetting);
@@ -42,9 +42,7 @@ namespace Controller
             {
                 return;
             }
-            
             shapeController.SpawnShapeRandom(ctx);
-            
         }
         
         

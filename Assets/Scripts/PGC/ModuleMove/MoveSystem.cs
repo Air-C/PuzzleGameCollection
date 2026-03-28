@@ -7,7 +7,7 @@ namespace PGC.ModuleMove
     public class MoveSystem
     {
         ShapeController shapeController;
-        GridController gridController = new GridController();
+        GridController gridController;
         
         private float sinceLastMoveTime = 0.0f;
         private float sinceLastAutoMoveTime = 0.0f;
@@ -17,6 +17,7 @@ namespace PGC.ModuleMove
         {
             this.ctx = ctx;
             shapeController = new ShapeController(ctx);
+            gridController = new GridController(ctx);
             Debug.Log($"System moveInterval: {ctx.assetModule.sysSettings.moveSystemMoveInterval}");
             Debug.Log($"System autoMoveInterval: {ctx.assetModule.sysSettings.moveSystemAutoMoveInterval}");
         }
@@ -44,18 +45,18 @@ namespace PGC.ModuleMove
                 MoveDown();
             }
             
-            if (ctx.inputModule.horizontalMove.value != 0 && gridController.IsCanHorizontalMove(ctx))
+            if (ctx.inputModule.horizontalMove.value != 0 && gridController.IsCanHorizontalMove())
             {
                 if (ctx.inputModule.holdTimer == 0 || ctx.inputModule.holdTimer >= ctx.assetModule.sysSettings.horizontalMoveDelay)
                 {
-                    shapeController.ShapeHorizontalMove(ctx.inputModule.horizontalMove.value,ctx);
+                    shapeController.ShapeHorizontalMove(ctx.inputModule.horizontalMove.value);
                 }
                 ctx.inputModule.holdTimer += ctx.assetModule.sysSettings.moveSystemMoveInterval;
             }
             
-            if (ctx.inputModule.rotate.value != 0 && gridController.IsCanRotate(ctx))
+            if (ctx.inputModule.rotate.value != 0 && gridController.IsCanRotate())
             {
-                shapeController.ShapeRotate(ctx.inputModule.rotate.value,ctx);
+                shapeController.ShapeRotate(ctx.inputModule.rotate.value);
             }
             ctx.inputModule.RestInput();
             sinceLastMoveTime -= ctx.assetModule.sysSettings.moveSystemMoveInterval;
@@ -68,14 +69,14 @@ namespace PGC.ModuleMove
                 verticalMoveValue = ctx.inputModule.verticalMove.value;
             }
             
-            if (gridController.IsCanDown(ctx, verticalMoveValue))
+            if (gridController.IsCanDown(verticalMoveValue))
             {
-                shapeController.ShapeDown(verticalMoveValue,ctx);
+                shapeController.ShapeDown(verticalMoveValue);
             }
             else
             {
-                gridController.LockSquares(ctx);
-                gridController.CheckIsFullAndClear(ctx);
+                gridController.LockSquares();
+                gridController.CheckIsFullAndClear();
             }
         }
     }

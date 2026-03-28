@@ -2,10 +2,12 @@
 using Entities;
 using Entities.SO;
 using PGC.Entities.Grid;
+using PGC.Enum;
 using PGC.ModuleAsset;
 using PGC.ModuleClearLine.Model;
 using PGC.ModuleInput;
 using PGC.ModuleInventory;
+using PGC.ModuleItem.Model;
 using PGC.Pool;
 using PGC.System;
 using UnityEngine;
@@ -19,9 +21,9 @@ namespace PGC
     {
         // entity
         public SquareShapeEntity currentSquareShape;
-        public bool CurrentShapeIsReachedBottom = false;
-        public List<SquareEntity> NewReacdhedSquare = new List<SquareEntity>();
-        public WaitForDestroySquares SquaresWaitForDestory = new ();
+        public bool currentShapeIsReachedBottom = false;
+        public List<SquareEntity> newReachedSquare = new List<SquareEntity>();
+        public WaitForDestroySquares squaresWaitForDestroy = new ();
         public GridEntity grid;
 
         public SaveData saveData;
@@ -48,9 +50,8 @@ namespace PGC
         public InventoryLocalData inventoryLocalData;
         
         public int totalScore = 0;
-        public Queue<WaitForClearModel> waitForClearModelQueue = new Queue<WaitForClearModel>();
 
-        public List<(bool hasItem,GameObject item)> itemsBar = new ();
+        public List<ItemBarModel> itemsBar = new ();
         public GameObject shapePreviewBar;
 
     }

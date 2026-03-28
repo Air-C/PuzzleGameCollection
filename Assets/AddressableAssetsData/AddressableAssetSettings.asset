@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: a33f05b3c12c582489b0c73684167b04
   m_currentHash:
     serializedVersion: 2
-    Hash: 9307370abb40d6e0e1416cb6ec210f84
+    Hash: 00000000000000000000000000000000
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
   m_CatalogRequestsTimeout: 0
@@ -114,6 +114,7 @@ MonoBehaviour:
     - Square
     - Popup
     - ShapeImage
+    - Item
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: d38041323beaa674e91f12da55ddfe6d, type: 2}

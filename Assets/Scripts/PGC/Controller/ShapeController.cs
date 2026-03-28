@@ -44,13 +44,7 @@ namespace Controller
                     Debug.Log("Game Over!");
                     return;
                 }
-                
-                SquareEntity square = new SquareEntity(squareIndex.x, squareIndex.y);
-                square.SquareObj = UnityEngine.Object.Instantiate(squareSo.prefab, ctx.grid.GetWorldPositionByIndex(squareIndex), Quaternion.identity);
-                if (squareSo.score != 0)
-                {
-                    square.Score = squareSo.score;
-                }
+                SquareEntity square = GenerateSquare(squareIndex.x, squareIndex.y, squareSo);
                 if (offset.x == 0 && offset.y == 0)
                 {
                     ctx.currentSquareShape.AddSquaresFirst(square);
@@ -61,6 +55,17 @@ namespace Controller
                 }
             }
             ResetShapePreview();
+        }
+
+        public SquareEntity GenerateSquare(int x, int y, SquareSo squareSo)
+        {
+            SquareEntity square = new SquareEntity(x, y);
+            square.SquareObj = UnityEngine.Object.Instantiate(squareSo.prefab, ctx.grid.GetWorldPositionByIndex(new Vector2Int(x,y)), Quaternion.identity);
+            if (squareSo.score != 0)
+            {
+                square.Score = squareSo.score;
+            }
+            return square;
         }
 
         public void ResetShapePreview()
@@ -82,7 +87,7 @@ namespace Controller
             ctx.assetModule.ShapeSoTryGetRandom(out ctx.previewShape);
         }
 
-        public void ShapeHorizontalMove(int horizontalValue,GameContext ctx)
+        public void ShapeHorizontalMove(int horizontalValue)
         {
             List<SquareEntity> squares = ctx.currentSquareShape.GetSquares();
             foreach (var square in squares)
@@ -93,7 +98,7 @@ namespace Controller
             
         }
 
-        public void ShapeDown(int verticalValue,GameContext ctx)
+        public void ShapeDown(int verticalValue)
         {
             List<SquareEntity> squares = ctx.currentSquareShape.GetSquares();
             foreach (var square in squares)
@@ -105,7 +110,7 @@ namespace Controller
             }
         }
 
-        public void ShapeRotate(int rotateValue,GameContext ctx)
+        public void ShapeRotate(int rotateValue)
         {
             if (rotateValue == 0)
             {

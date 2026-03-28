@@ -2,6 +2,8 @@
 using Controller;
 using PGC.ModelEvent.Data;
 using PGC.ModuleClearLine;
+using PGC.ModuleClearLine.Model;
+using PGC.ModuleItem;
 using PGC.ModuleMove;
 using PGC.System;
 using PGC.VFX;
@@ -20,6 +22,7 @@ namespace PGC
         ScoreSystem scoreSystem;
         RenderSystem renderSystem;
         VFXSystem vfxSystem;
+        ItemSystem itemSystem;
 
         private float restTime;
         private float tickTime;
@@ -45,15 +48,21 @@ namespace PGC
             scoreSystem = new ScoreSystem(ctx);
             renderSystem = new RenderSystem(ctx);
             vfxSystem = new VFXSystem(ctx);
+            itemSystem = new ItemSystem(ctx);
         }
         
         void SubscribeEvents()
         {
             ctx.eventBus.Subscribe<PreviewShapeChangeEvent>(renderSystem.OnResetShapePreview);
-            ctx.eventBus.Subscribe<LineClearedEvent>(vfxSystem.OnLineCleared);
+            ctx.eventBus.Subscribe<SquareClearedEvent>(vfxSystem.OnLineCleared);
             ctx.eventBus.Subscribe<GameOverEvent>(OnGameOver);
             ctx.eventBus.Subscribe<RestartGameEvent>(OnRestartGame);
             ctx.eventBus.Subscribe<ReturnMenuEvent>(OnReturnMenu);
+            ctx.eventBus.Subscribe<WaitForClearEvent>(clearLineSystem.OnClear);
+            ctx.eventBus.Subscribe<AddItemEvent>(itemSystem.OnGenerateItem);
+            ctx.eventBus.Subscribe<ItemBarChangeEvent>(renderSystem.OnItemBarChanged);
+            ctx.eventBus.Subscribe<ItemEffectEvent>(itemSystem.OnPositiveItemEffect);
+            ctx.eventBus.Subscribe<ItemEffectEvent>(itemSystem.OnNegativeItemEffect);
         }
 
         public void InitGame()
@@ -77,11 +86,9 @@ namespace PGC
         {
             missionController.updateMission();
             ctx.inputModule.Update(Time.deltaTime);
-            clearLineSystem.ExecuteClear();
             scoreSystem.ScoreClearSquare();
             RenderSystem.RenderDestroySquare(ctx);
             RenderSystem.RenderShapePos(ctx);
-
         }
 
         public void PauseGame()
@@ -125,9 +132,9 @@ namespace PGC
             }
             Debug.Log($"currentSquareShape Count: {ctx.currentSquareShape.GetSquares().Count()}");
             ctx.currentSquareShape.ClearSquares();
-            ctx.NewReacdhedSquare.Clear();
-            ctx.SquaresWaitForDestory.squares.Clear();
-            ctx.CurrentShapeIsReachedBottom = false;
+            ctx.newReachedSquare.Clear();
+            ctx.squaresWaitForDestroy.squares.Clear();
+            ctx.currentShapeIsReachedBottom = false;
             ctx.particlePool.DeactivateParticlesForce();
             
             for (int i = 0; i < ctx.grid.GridBorder.x; i++)
