@@ -91,7 +91,6 @@ namespace PGC.ModuleItem
         
         public void OnPositiveItemEffect(ItemEffectEvent e)
         {
-            Debug.LogWarning("OnPositiveItemEffect");
             if (positiveActions.TryGetValue(e.type, out Action action))
             {
                 action.Invoke();
@@ -100,8 +99,6 @@ namespace PGC.ModuleItem
 
         public void OnNegativeItemEffect(ItemEffectEvent e)
         {
-            Debug.LogWarning("OnNegativeItemEffect");
-
             if (negativeActions.TryGetValue(e.type, out Action action))
             {
                 action.Invoke();

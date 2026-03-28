@@ -53,6 +53,7 @@ namespace PGC
 
         public List<ItemBarModel> itemsBar = new ();
         public GameObject shapePreviewBar;
+        public GameObject pauseGameButton;
 
     }
 }

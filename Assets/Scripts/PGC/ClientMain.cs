@@ -26,6 +26,8 @@ namespace PGC
         private List<GameObject> itemsBar;
         [SerializeField]
         private GameObject shapePreviewBar;
+        [SerializeField]
+        private GameObject pauseGameButton;
         GameContext ctx = new ();
         bool isAssetLoaded;
         GameSystem gameSystem;
@@ -54,6 +56,7 @@ namespace PGC
                 });
             }
             ctx.shapePreviewBar = shapePreviewBar;
+            ctx.pauseGameButton = pauseGameButton;
         }
 
         private void Start()
@@ -91,6 +94,7 @@ namespace PGC
         {
             GameObjectListCheck(itemsBar, new List<Type>(){typeof(Image)}, "itemsBar");
             GameObjectCheck(shapePreviewBar, new List<Type>(){typeof(Image)}, "shapePreviewBar");
+            GameObjectCheck(pauseGameButton, new List<Type>(){typeof(Button)}, "pauseGameButton");
         }
 
         void GameObjectListCheck(List<GameObject> objs, List<Type> components, string warnMsg = "GameObjectSetCheck")

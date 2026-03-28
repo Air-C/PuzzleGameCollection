@@ -1,28 +1,32 @@
-﻿using PGC.Enum;
+﻿using System.Collections.Generic;
+using PGC.Enum;
 using UnityEngine;
 
 namespace PGC.Popup
 {
     public class PopupManager
     {
-        private GameObject pause;
+        // private GameObject pause;
+        private Dictionary<PopupEnum, GameObject> popups = new Dictionary<PopupEnum, GameObject>();
+        
         private GameObject canvas;
         public PopupListener GetPopup(GameContext ctx, PopupEnum popupType)
         {
-            if (pause != null)
+            if (popups.ContainsKey(popupType))
             {
-                pause.SetActive(true);
-                return pause.GetComponent<PopupListener>();
+                popups[popupType].SetActive(true);
+                return popups[popupType].GetComponent<PopupListener>();
             }
             canvas = GameObject.FindWithTag("MainCanvas");
-            ctx.assetModule.GetPopup(popupType, out var prefab);            
-            pause =  Object.Instantiate(prefab, canvas.transform);
-            return pause.GetComponent<PopupListener>();
+            Debug.Log($"PopupManager::GetPopup::{popupType}");
+            ctx.assetModule.GetPopup(popupType, out var prefab);      
+            popups.Add(popupType, Object.Instantiate(prefab, canvas.transform));
+            return popups[popupType].GetComponent<PopupListener>();
         }
 
-        public void Close()
+        public void Close(PopupEnum popupType)
         {
-            pause.SetActive(false);
+            popups[popupType].SetActive(false);
         }
     }
 }

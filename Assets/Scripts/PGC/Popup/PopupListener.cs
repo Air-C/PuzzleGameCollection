@@ -24,7 +24,6 @@ namespace PGC.Popup
             
             foreach (var button in buttonList)
             {
-                Debug.Log($"Listening to button {button.name}, actions contains button:{onClickActions.ContainsKey(button.name)}");
                 if (onClickActions.ContainsKey(button.name))
                 {
                     button.onClick.AddListener(() =>

@@ -24,6 +24,7 @@ namespace PGC.System
         
         public void ShowPausePopup()
         {
+            Debug.Log("ShowPausePopup");
             PopupListener popup = popupManager.GetPopup(ctx, PopupEnum.PausePopup);
             Dictionary<string, Action> popupActions = new Dictionary<string, Action>();
             foreach (var button in popup.ButtonList)

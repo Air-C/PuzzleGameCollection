@@ -7,6 +7,7 @@ using PGC.ModuleItem;
 using PGC.ModuleMove;
 using PGC.System;
 using PGC.VFX;
+using UnityEngine.UI;
 using ScoreSystem = PGC.ModuleScore.ScoreSystem;
 
 namespace PGC
@@ -36,6 +37,7 @@ namespace PGC
             this.ctx = ctx;
             InitSystem();
             SubscribeEvents();
+            ctx.pauseGameButton.GetComponent<Button>().onClick.AddListener(PauseGame);
             tickTime = ctx.assetModule.sysSettings.gameSystemTickTime;
             Debug.Log($"System tick time: {tickTime}");
         }
@@ -130,7 +132,6 @@ namespace PGC
                     Object.Destroy(squareEntity.SquareObj);
                 }
             }
-            Debug.Log($"currentSquareShape Count: {ctx.currentSquareShape.GetSquares().Count()}");
             ctx.currentSquareShape.ClearSquares();
             ctx.newReachedSquare.Clear();
             ctx.squaresWaitForDestroy.squares.Clear();
