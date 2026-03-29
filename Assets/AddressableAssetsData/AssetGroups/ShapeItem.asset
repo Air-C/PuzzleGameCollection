@@ -15,35 +15,47 @@ MonoBehaviour:
   m_GroupName: ShapeItem
   m_GUID: 65aba21a327e01f47a5e24ac1a8fcb51
   m_SerializeEntries:
-  - m_GUID: 07c1ec4c75fb7744db28c0872887998e
+  - m_GUID: 188276a7a5548db45b4fc781efc38bd9
     m_Address: TShape
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - Shape
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 1ccac1a04ff80664e8abb475212b38cd
-    m_Address: LShape
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 2a6aff6d5a36a684bb1500965e3fe267
-    m_Address: JShape
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 472d3762d264fa64e9cefefa8e142fa8
-    m_Address: ZShape
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7160e900b71c96c47b906daf6fb0ed20
-    m_Address: SShape
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a94fd11b0cb642b4d85f61d3d0ead6fd
+  - m_GUID: 5e6c695fdcb51d04a9bb63d2c9401008
     m_Address: IShape
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - Shape
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 81aed1a0a02e1544788291d0273a5b3a
+    m_Address: SShape
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Shape
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9da6c351a8d93894f8c8ece8441cc235
+    m_Address: OShape
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Shape
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ac8d868cbed187c499bb894be67dc361
+    m_Address: ZShape
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Shape
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c11d6cbce25107946af18efff5697fe3
+    m_Address: LShape
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Shape
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cd23bc36576daf245a51eef899448394
+    m_Address: JShape
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Shape
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 7cbbc3eb528db194c8cc446a5752b3dc, type: 2}
