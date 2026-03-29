@@ -37,6 +37,11 @@ namespace Custom.Tool
         {
             return new Vector3(square.X * width, square.Y * width, 0 );
         }
+        
+        public static bool Hit(float probability)
+        {
+            return UnityEngine.Random.value < probability;
+        }
     }
 
 }

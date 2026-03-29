@@ -89,8 +89,9 @@ namespace PGC
             ctx.inputModule.Update(Time.deltaTime);
             clearLineSystem.ClearWaitForClearModel();
             scoreSystem.ScoreClearSquare();
-            RenderSystem.RenderDestroySquare(ctx);
-            RenderSystem.RenderShapePos(ctx);
+            ctx.squarePool.ReturnSquareByIndexes();
+            RenderSystem.ReRenderSquarePosInGrid(ctx);
+            RenderSystem.ReRenderShapePos(ctx);
         }
 
         public void PauseGame()

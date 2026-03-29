@@ -42,7 +42,7 @@ namespace Controller
             {
                 return;
             }
-            shapeController.SpawnShapeRandom(ctx);
+            shapeController.SpawnShapeRandom();
         }
         
         

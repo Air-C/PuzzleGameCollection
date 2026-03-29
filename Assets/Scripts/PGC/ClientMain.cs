@@ -84,6 +84,7 @@ namespace PGC
             yield return ctx.assetModule.LoadAllAssets();
             ctx.grid = new GridEntity(ctx);
             ctx.particlePool = new ParticlePool(ctx);
+            ctx.squarePool = new SquarePool(ctx);
             gameSystem = new GameSystem(ctx);
             isAssetLoaded = true;
             gameSystem.InitGame();

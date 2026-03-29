@@ -12,6 +12,7 @@ namespace PGC.Settings
         public float moveSystemMoveInterval = 0.05f;
         public float moveSystemAutoMoveInterval = 0.5f;
         public float horizontalMoveDelay = 0.5f;
+        public float specialItemHitRate = 0.5f;
         
         public List<MissionSetting> missionSettings;
     }

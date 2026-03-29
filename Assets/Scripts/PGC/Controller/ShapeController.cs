@@ -18,7 +18,7 @@ namespace Controller
         }
 
         
-        public void SpawnShapeRandom(GameContext ctx)
+        public void SpawnShapeRandom()
         {
             if (ctx.currentSquareShape.GetSquares().Count > 0)
             {
@@ -30,12 +30,12 @@ namespace Controller
                 GetPreviewShapeSo();
             }
             SquareShapeSo shapeSo = ctx.previewShape;
-            ctx.assetModule.SquareSoTryGetRandom(out SquareSo squareSo);
             Vector2Int initIndex = ctx.assetModule.gridSo.gridTopCenter;
-            
+            List<Vector2Int> squareIndexes = new List<Vector2Int>();
             foreach (var offset in shapeSo.offsets)
             {
                 Vector2Int squareIndex = initIndex + offset;
+                squareIndexes.Add(squareIndex);
                 if (ctx.grid.Get(squareIndex.x, squareIndex.y) != null)
                 {
                     //GameOver!
@@ -44,28 +44,20 @@ namespace Controller
                     Debug.Log("Game Over!");
                     return;
                 }
-                SquareEntity square = GenerateSquare(squareIndex.x, squareIndex.y, squareSo);
-                if (offset.x == 0 && offset.y == 0)
+            }
+            List<SquareEntity> squareEntityList = ctx.squarePool.GetSquareByIndexes(squareIndexes);
+            foreach (var squareEntity in squareEntityList)
+            {
+                if (squareEntity.X-initIndex.x == 0 && squareEntity.Y-initIndex.y == 0)
                 {
-                    ctx.currentSquareShape.AddSquaresFirst(square);
+                    ctx.currentSquareShape.AddSquaresFirst(squareEntity);
                 }
                 else
                 {
-                    ctx.currentSquareShape.AddSquare(square);
+                    ctx.currentSquareShape.AddSquare(squareEntity);
                 }
             }
             ResetShapePreview();
-        }
-
-        public SquareEntity GenerateSquare(int x, int y, SquareSo squareSo)
-        {
-            SquareEntity square = new SquareEntity(x, y);
-            square.SquareObj = UnityEngine.Object.Instantiate(squareSo.prefab, ctx.grid.GetWorldPositionByIndex(new Vector2Int(x,y)), Quaternion.identity);
-            if (squareSo.score != 0)
-            {
-                square.Score = squareSo.score;
-            }
-            return square;
         }
 
         public void ResetShapePreview()

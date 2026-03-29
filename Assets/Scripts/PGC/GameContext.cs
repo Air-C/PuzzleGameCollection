@@ -35,6 +35,7 @@ namespace PGC
         
         //pool
         public ParticlePool particlePool;
+        public SquarePool squarePool;
         
         // event
         public EventBus eventBus;

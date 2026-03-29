@@ -9,5 +9,6 @@ namespace PGC.System
         public float moveSystemMoveInterval;
         public float moveSystemAutoMoveInterval;
         public float horizontalMoveDelay;
+        public float specialItemHitRate;
     }
 }

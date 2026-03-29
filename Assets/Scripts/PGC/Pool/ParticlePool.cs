@@ -23,9 +23,9 @@ namespace PGC.Pool
         public ParticlePool(GameContext ctx)
         {
             this.ctx = ctx;
-            int size = ctx.assetModule.poolSettings.particlePoolSize;
+            int size = ctx.assetModule.particlePoolSettings.particlePoolSize;
             GameObject particlePrefab = ctx.assetModule.destroyParticleSystemPrefab;
-            poolManager = Object.Instantiate(ctx.assetModule.poolSettings.poolManager);
+            poolManager = Object.Instantiate(ctx.assetModule.particlePoolSettings.poolManager);
             GameObject obj;
             for (int i = 0; i < size; i++)
             {

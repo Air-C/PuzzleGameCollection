@@ -124,11 +124,15 @@ namespace PGC.ModuleItem
                 }
             }
             // 最低层一行增加新方块
-            ctx.assetModule.SquareSoTryGetRandom(out SquareSo squareSo);
+            List<Vector2Int> indexes = new List<Vector2Int>();
             for (int x = 0; x < ctx.grid.GridBorder.x; x++)
             {
-                SquareEntity squareEntity = shapeController.GenerateSquare(x, 0, squareSo);
-                ctx.grid.Set(x, 0, squareEntity);
+                indexes.Add(new Vector2Int(x, 0));
+            }
+            List<SquareEntity> squareEntityList = ctx.squarePool.GetSquareByIndexes(indexes);
+            foreach (var squareEntity in squareEntityList)
+            {
+                ctx.grid.Set(squareEntity.X, squareEntity.Y, squareEntity);
             }
         }
 

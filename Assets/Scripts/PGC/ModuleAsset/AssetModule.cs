@@ -24,7 +24,8 @@ namespace PGC.ModuleAsset
         public GameObject destroyParticleSystemPrefab;
         public Dictionary<ShapeTypeEnum, Sprite> shapePreviewPrefabDictionary = new ();
         public Dictionary<PopupEnum, GameObject> popupPrefabs = new ();
-        public PoolSettings poolSettings;
+        public ParticlePoolSettings particlePoolSettings;
+        public SquarePoolSettings squarePoolSettings;
         public SystemSettings sysSettings;
         public MissionSetting currentMissionSetting;
         public Dictionary<ItemAbilityType, ItemEntity> itemTable = new ();
@@ -52,9 +53,14 @@ namespace PGC.ModuleAsset
                 destroyParticleSystemPrefab = particle;
             });
             
-            yield return LoadAsset<PoolSettings>("ParticlePoolSettings", (settings) =>
+            yield return LoadAsset<ParticlePoolSettings>("ParticlePoolSettings", (settings) =>
             {
-                poolSettings = settings;
+                particlePoolSettings = settings;
+            });
+            
+            yield return LoadAsset<SquarePoolSettings>("SquarePoolSettings", (settings) =>
+            {
+                squarePoolSettings = settings;
             });
             
             yield return LoadAsset<SystemSettings>("PGCSettings", (settings) =>

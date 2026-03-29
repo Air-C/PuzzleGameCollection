@@ -11,6 +11,13 @@ namespace Entities
         public int Y { get; set; }
         public GameObject SquareObj {get; set; }
         private ItemAbilityType abilityType = ItemAbilityType.None;
+        private string squareName;
+
+        public string SquareName
+        {
+            get => squareName;
+            set => squareName = value;
+        }
 
         public ItemAbilityType AbilityType
         {

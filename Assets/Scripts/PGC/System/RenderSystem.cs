@@ -75,17 +75,8 @@ namespace PGC.System
             popup.Init(popupActions);
         }
         
-        public static void RenderDestroySquare(GameContext ctx)
+        public static void ReRenderSquarePosInGrid(GameContext ctx)
         {
-            if (ctx.squaresWaitForDestroy.squares.Count == 0)
-            {
-                return;
-            }
-            foreach (var square in ctx.squaresWaitForDestroy.squares)
-            {
-                Object.Destroy(square.SquareObj);
-            }
-            ctx.squaresWaitForDestroy.squares.Clear();
             foreach (var square in ctx.grid.Grid)
             {
                 if (square != null)
@@ -97,7 +88,7 @@ namespace PGC.System
         }
         
         
-        public static void RenderShapePos(GameContext ctx)
+        public static void ReRenderShapePos(GameContext ctx)
         {
             List<SquareEntity> squares = ctx.currentSquareShape.GetSquares();
             if (ctx.newReachedSquare.Count > 0)

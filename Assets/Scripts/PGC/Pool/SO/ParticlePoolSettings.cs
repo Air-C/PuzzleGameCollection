@@ -4,7 +4,7 @@ namespace PGC.Pool.SO
 {
     
     [CreateAssetMenu(fileName = "ParticlePoolSettings", menuName = "PGC/ParticlePoolSettings")]
-    public class PoolSettings : ScriptableObject
+    public class ParticlePoolSettings : ScriptableObject
     {
         
         public int particlePoolSize;
