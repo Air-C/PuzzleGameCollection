@@ -134,26 +134,26 @@ namespace PGC.ModuleItem
 
         void ClearRow()
         {
-            WaitForClearEvent waitForClearEvent = new WaitForClearEvent();
-            waitForClearEvent.clearSquareType = ClearSquareType.Row;
-            waitForClearEvent.waitForClearRows = new HashSet<int>(){0};
-            ctx.eventBus.Publish(waitForClearEvent);
+            WaitForClearModel waitForClearModel = new WaitForClearModel();
+            waitForClearModel.clearSquareType = ClearSquareType.Row;
+            waitForClearModel.waitForClearRows = new HashSet<int>(){0};
+            ctx.clearModels.Enqueue(waitForClearModel);
         }
 
         void ClearColumn()
         {
-            WaitForClearEvent waitForClearEvent = new WaitForClearEvent();
-            waitForClearEvent.clearSquareType = ClearSquareType.Column;
-            waitForClearEvent.waitForClearColumns = new HashSet<int>(){0};
-            ctx.eventBus.Publish(waitForClearEvent);
+            WaitForClearModel waitForClearModel = new WaitForClearModel();
+            waitForClearModel.clearSquareType = ClearSquareType.Column;
+            waitForClearModel.waitForClearColumns = new HashSet<int>(){0};
+            ctx.clearModels.Enqueue(waitForClearModel);
         }
 
         void Boom()
         {
-            WaitForClearEvent waitForClearEvent = new WaitForClearEvent();
-            waitForClearEvent.clearSquareType = ClearSquareType.Circle;
-            waitForClearEvent.waitForClearCircle = (new Vector2Int(0,0), 3);
-            ctx.eventBus.Publish(waitForClearEvent);
+            WaitForClearModel waitForClearModel = new WaitForClearModel();
+            waitForClearModel.clearSquareType = ClearSquareType.Circle;
+            waitForClearModel.waitForClearCircle = (new Vector2Int(0,0), 3);
+            ctx.clearModels.Enqueue(waitForClearModel);
         }
     }
 }

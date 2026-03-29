@@ -60,7 +60,6 @@ namespace PGC
             ctx.eventBus.Subscribe<GameOverEvent>(OnGameOver);
             ctx.eventBus.Subscribe<RestartGameEvent>(OnRestartGame);
             ctx.eventBus.Subscribe<ReturnMenuEvent>(OnReturnMenu);
-            ctx.eventBus.Subscribe<WaitForClearEvent>(clearLineSystem.OnClear);
             ctx.eventBus.Subscribe<AddItemEvent>(itemSystem.OnGenerateItem);
             ctx.eventBus.Subscribe<ItemBarChangeEvent>(renderSystem.OnItemBarChanged);
             ctx.eventBus.Subscribe<ItemEffectEvent>(itemSystem.OnPositiveItemEffect);
@@ -88,6 +87,7 @@ namespace PGC
         {
             missionController.updateMission();
             ctx.inputModule.Update(Time.deltaTime);
+            clearLineSystem.ClearWaitForClearModel();
             scoreSystem.ScoreClearSquare();
             RenderSystem.RenderDestroySquare(ctx);
             RenderSystem.RenderShapePos(ctx);

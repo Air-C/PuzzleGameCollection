@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace PGC.ModuleClearLine.Model
 {
-    public struct WaitForClearEvent
+    public struct WaitForClearModel
     {
         public ClearSquareType clearSquareType;
         public HashSet<int> waitForClearRows;

@@ -136,10 +136,10 @@ namespace Controller
 
             if (clearRows.Count > 0)
             {
-                WaitForClearEvent waitForClearEvent = new WaitForClearEvent();
-                waitForClearEvent.clearSquareType = ClearSquareType.Row;
-                waitForClearEvent.waitForClearRows = clearRows;
-                ctx.eventBus.Publish(waitForClearEvent);
+                WaitForClearModel waitForClearModel = new WaitForClearModel();
+                waitForClearModel.clearSquareType = ClearSquareType.Row;
+                waitForClearModel.waitForClearRows = clearRows;
+                ctx.clearModels.Enqueue(waitForClearModel);
             }
             ctx.newReachedSquare.Clear();
         }

@@ -17,38 +17,15 @@ namespace PGC.ModuleClearLine
             this.ctx = ctx;
         }
         
-        void ClearRow(HashSet<int> rows)
+        public void ClearWaitForClearModel()
         {
-            List<Vector2Int> indexs = new List<Vector2Int>();
-            foreach (var row in rows)
+            while (ctx.clearModels.Count > 0)
             {
-                for (int x = 0; x < ctx.grid.GridBorder.x; x++)
-                {
-                    indexs.Add(new Vector2Int(x,row));
-                }
+                OnClear(ctx.clearModels.Dequeue());
             }
-            ClearSquares(indexs);
-            // // 棋盘数据下移动
-            // for (int x = 0; x < ctx.grid.GridBorder.x; x++)
-            // {
-            //     for (int y = minRow; y < ctx.grid.GridBorder.y; y++)
-            //     {
-            //         int newRow = y + rows.Count;
-            //         if (newRow < ctx.grid.GridBorder.y)
-            //         {
-            //             ctx.grid.Set(x,y, ctx.grid.Get(x,y+newRow));
-            //             ctx.grid.Get(x,y)?.RestIndex(x,y);
-            //         }
-            //         else
-            //         {
-            //             ctx.grid.Set(x,y, null);
-            //         }
-            //     }
-            // }
-            rows.Clear();
         }
 
-        public void OnClear(WaitForClearEvent e)
+        public void OnClear(WaitForClearModel e)
         {
             List<Vector2Int> indexs = new List<Vector2Int>();
             switch (e.clearSquareType)
@@ -79,12 +56,12 @@ namespace PGC.ModuleClearLine
             }
             ClearSquares(indexs);
             //test
-            List<ItemAbilityType> items = new ();
-            items.Add(ItemAbilityType.ClearRow);
-            items.Add(ItemAbilityType.Boom3);
-            
-            AddItemEvent evt = new(items);
-            ctx.eventBus.Publish<AddItemEvent>(evt);
+            // List<ItemAbilityType> items = new ();
+            // items.Add(ItemAbilityType.ClearRow);
+            // items.Add(ItemAbilityType.Boom3);
+            //
+            // AddItemEvent evt = new(items);
+            // ctx.eventBus.Publish<AddItemEvent>(evt);
         }
 
         void ClearSquares(List<Vector2Int> indexes)
@@ -137,7 +114,7 @@ namespace PGC.ModuleClearLine
             SquareDown(new Vector2Int(index.x,index.y+1));
         }
 
-        void CountCircleSquares(WaitForClearEvent e,List<Vector2Int> indexs)
+        void CountCircleSquares(WaitForClearModel e,List<Vector2Int> indexs)
         {
             Vector2Int index = e.waitForClearCircle.index;
             int radius = e.waitForClearCircle.radius;
