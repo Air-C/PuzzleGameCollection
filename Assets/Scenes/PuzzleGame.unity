@@ -1414,6 +1414,7 @@ MonoBehaviour:
   - {fileID: 89786812}
   - {fileID: 448924901}
   shapePreviewBar: {fileID: 682493214}
+  pauseGameButton: {fileID: 541314464}
 --- !u!1 &1198110457
 GameObject:
   m_ObjectHideFlags: 0
