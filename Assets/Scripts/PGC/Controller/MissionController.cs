@@ -27,6 +27,12 @@ namespace Controller
             }
         }
         
+        public void SetMissionLevel(int level)
+        {
+            missionLevel = level;
+            SetCurrentMission(level);
+        }
+        
         void SetCurrentMission(int level)
         {
             if (missionSettings.TryGetValue(level, out MissionSetting missionSetting))

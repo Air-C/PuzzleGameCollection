@@ -4,6 +4,7 @@ using Custom.Tool;
 using Entities;
 using PGC.Enum;
 using PGC.Pool.Model;
+using PGC.System;
 using Unity.Mathematics.Geometry;
 using UnityEngine;
 
@@ -14,10 +15,12 @@ namespace PGC.Pool
         private GameContext ctx;
         GameObject poolManager;
         
-        private readonly Dictionary<SquareColorEnum, Queue<SquareEntity>> specialPool = new();
+        private readonly Dictionary<SquareColorEnum, Queue<SquareEntity>> positivePool = new();
+        private readonly Dictionary<SquareColorEnum, Queue<SquareEntity>> negativePool = new();
         private readonly Dictionary<SquareColorEnum, Queue<SquareEntity>> normalPool = new();
         private readonly Queue<SquareEntity> punishmentPool = new();
-        private readonly List<SquareColorEnum> specialColors = new();
+        private readonly List<SquareColorEnum> positiveColors = new();
+        private readonly List<SquareColorEnum> negativeColors = new();
         private readonly List<SquareColorEnum> normalColors = new();
         
         public SquarePool(GameContext ctx)
@@ -39,10 +42,15 @@ namespace PGC.Pool
                     normalPool.Add(squarePoolAssetModel.squareColor, squarePoolQueue);
                     normalColors.Add(squarePoolAssetModel.squareColor);
                 }
+                else if (IsNegativeAbility(squarePoolAssetModel.abilityType))
+                {
+                    negativePool.Add(squarePoolAssetModel.squareColor, squarePoolQueue);
+                    negativeColors.Add(squarePoolAssetModel.squareColor);
+                }
                 else
                 {
-                    specialPool.Add(squarePoolAssetModel.squareColor, squarePoolQueue);
-                    specialColors.Add(squarePoolAssetModel.squareColor);
+                    positivePool.Add(squarePoolAssetModel.squareColor, squarePoolQueue);
+                    positiveColors.Add(squarePoolAssetModel.squareColor);
                 }
             }
         }
@@ -87,15 +95,51 @@ namespace PGC.Pool
             {
                 return GetPunishmentSquare(indexes);
             }
-            
-            if (ConstantTool.Hit(ctx.assetModule.sysSettings.specialItemHitRate))
-            {
-                return GetSpecialSquareByShape(indexes);
-            }
-            else
+
+            var missionSetting = ctx.assetModule.currentMissionSetting;
+            if (!missionSetting.enableSpecialItems || missionSetting.specialItemMode == SpecialItemMode.Disabled)
             {
                 return GetNormalSquareByShape(indexes);
             }
+
+            if (ConstantTool.Hit(missionSetting.specialItemHitRate))
+            {
+                List<SquareColorEnum> availableColors = GetAvailableSpecialColors(missionSetting.specialItemMode);
+                if (availableColors.Count > 0)
+                {
+                    return GetSpecialSquareByShape(indexes, availableColors);
+                }
+            }
+
+            return GetNormalSquareByShape(indexes);
+        }
+
+        List<SquareColorEnum> GetAvailableSpecialColors(SpecialItemMode mode)
+        {
+            List<SquareColorEnum> available = new List<SquareColorEnum>();
+            if (mode == SpecialItemMode.PositiveOnly || mode == SpecialItemMode.Both)
+            {
+                available.AddRange(positiveColors);
+            }
+            if (mode == SpecialItemMode.NegativeOnly || mode == SpecialItemMode.Both)
+            {
+                available.AddRange(negativeColors);
+            }
+            return available;
+        }
+
+        static bool IsNegativeAbility(ItemAbilityType abilityType)
+        {
+            return abilityType == ItemAbilityType.AddRow1;
+        }
+
+        Dictionary<SquareColorEnum, Queue<SquareEntity>> GetSpecialPoolDict(SquareColorEnum color)
+        {
+            if (positivePool.ContainsKey(color))
+            {
+                return positivePool;
+            }
+            return negativePool;
         }
         
         public List<SquareEntity> GetPunishmentSquare(List<Vector2Int> indexes)
@@ -130,16 +174,17 @@ namespace PGC.Pool
             return list;
         }
         
-        public List<SquareEntity> GetSpecialSquareByShape(List<Vector2Int> indexes)
+        public List<SquareEntity> GetSpecialSquareByShape(List<Vector2Int> indexes, List<SquareColorEnum> availableColors)
         {
             List<SquareEntity> list = new List<SquareEntity>();
             var randomNormalKey = normalColors[Random.Range(0, normalColors.Count)];
             randomNormalKey = SquareQueueInventoryCheck(randomNormalKey, normalPool, indexes.Count-1);
             Queue<SquareEntity> currentNormalQueue = normalPool[randomNormalKey];
 
-            var randomSpecialKey = specialColors[Random.Range(0, specialColors.Count)];
-            randomSpecialKey = SquareQueueInventoryCheck(randomSpecialKey, specialPool, 1);
-            Queue<SquareEntity> currentSpecialQueue = specialPool[randomSpecialKey];
+            var randomSpecialKey = availableColors[Random.Range(0, availableColors.Count)];
+            var specialPoolDic = GetSpecialPoolDict(randomSpecialKey);
+            randomSpecialKey = SquareQueueInventoryCheck(randomSpecialKey, specialPoolDic, 1);
+            Queue<SquareEntity> currentSpecialQueue = specialPoolDic[randomSpecialKey];
             
             int rand = Random.Range(0, indexes.Count);
             int count = 0;
@@ -192,7 +237,8 @@ namespace PGC.Pool
                     waitForDecSqDic.Add(square.SquareColor, new Queue<SquareEntity>(new[] {square}));
                 }
             }
-            DeactivateSquarePool(waitForDecSqDic, specialPool);
+            DeactivateSquarePool(waitForDecSqDic, positivePool);
+            DeactivateSquarePool(waitForDecSqDic, negativePool);
             DeactivateSquarePool(waitForDecSqDic, normalPool);
             if (waitForDecSqDic.TryGetValue(ctx.assetModule.squarePoolSettings.punishmentSetting.squareColor,
                     out Queue<SquareEntity> punishmentQueue))

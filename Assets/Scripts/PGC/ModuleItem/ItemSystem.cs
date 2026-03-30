@@ -9,6 +9,7 @@ using PGC.ModuleClearLine.Model;
 using PGC.ModuleInventory;
 using PGC.ModuleItem.Model;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace PGC.ModuleItem
 {
@@ -134,8 +135,13 @@ namespace PGC.ModuleItem
             }
             // 最低层一行增加新方块
             List<Vector2Int> indexes = new List<Vector2Int>();
+            int gapIndex = Random.Range(0, ctx.grid.GridBorder.x);
             for (int x = 0; x < ctx.grid.GridBorder.x; x++)
             {
+                if (gapIndex == x)
+                {
+                    continue;
+                }
                 indexes.Add(new Vector2Int(x, 0));
             }
             List<SquareEntity> squareEntityList = ctx.squarePool.GetSquareByIndexes(indexes, true);

@@ -71,6 +71,8 @@ namespace PGC
         public void InitGame()
         {
             ctx.gameSystemState.isRunning = true;
+            // 设置初始任务等级为1，确保不触发惩罚道具
+            missionController.SetMissionLevel(1);
         }
         
         public void Tick()
