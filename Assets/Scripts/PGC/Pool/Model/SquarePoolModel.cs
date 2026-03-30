@@ -6,7 +6,7 @@ namespace PGC.Pool.Model
 {
     public class SquarePoolModel
     {
-        public string squareName;
+        public SquareColorEnum squareColor;
         public Queue<SquareEntity> squarePool;
 
         public SquarePoolModel()

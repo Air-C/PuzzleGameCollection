@@ -8,6 +8,7 @@ namespace PGC.Pool.SO
     public class SquarePoolSettings : ScriptableObject
     {
         public GameObject poolManager;
+        public SquarePoolAssetModel punishmentSetting;
         public List<SquarePoolAssetModel> poolSettings = new ();
     }
 }

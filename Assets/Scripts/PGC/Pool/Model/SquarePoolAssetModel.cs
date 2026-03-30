@@ -9,6 +9,7 @@ namespace PGC.Pool.Model
     {
         public GameObject prefab;
         public ItemAbilityType abilityType;
+        public SquareColorEnum squareColor;
         public int size;
     }
 }

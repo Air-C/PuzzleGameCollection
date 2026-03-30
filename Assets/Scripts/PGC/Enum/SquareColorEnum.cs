@@ -10,5 +10,10 @@
         OrangeSquare,
         PurpleDotSquare,
         PurpleSquare,
+        SquareItemAddRow,
+        SquareItemBoom,
+        SquareItemClearColumn,
+        SquareItemCLearRow,
+        SquarePunishment,
     }
 }

@@ -45,7 +45,7 @@ namespace PGC.ModuleItem
                 ctx.assetModule.itemTable.TryGetValue(itemAbilityType, out ItemEntity item);
                 if (item == null)
                 {
-                    Debug.LogWarning($"itemTable not found: {itemAbilityType}");
+                    TriggerNegativeItemEffect(itemAbilityType);
                     continue;
                 }
                 ItemAbilityType barType = SetItemToBar(item);
@@ -97,6 +97,15 @@ namespace PGC.ModuleItem
             }
         }
 
+        void TriggerNegativeItemEffect(ItemAbilityType abilityType)
+        {
+            ItemEffectEvent e = new ItemEffectEvent()
+            {
+                type = abilityType,
+            };
+            OnNegativeItemEffect(e);
+        }
+
         public void OnNegativeItemEffect(ItemEffectEvent e)
         {
             if (negativeActions.TryGetValue(e.type, out Action action))
@@ -111,7 +120,7 @@ namespace PGC.ModuleItem
             // 棋盘数据向上移动
             for (int x = 0; x < ctx.grid.GridBorder.x; x++)
             {
-                for (int y = ctx.grid.GridBorder.y; y > 0; y--)
+                for (int y = ctx.grid.GridBorder.y; y >= 0; y--)
                 {
                     if (!ctx.grid.GridIndexIsNotNull(x, y))
                     {
@@ -129,7 +138,7 @@ namespace PGC.ModuleItem
             {
                 indexes.Add(new Vector2Int(x, 0));
             }
-            List<SquareEntity> squareEntityList = ctx.squarePool.GetSquareByIndexes(indexes);
+            List<SquareEntity> squareEntityList = ctx.squarePool.GetSquareByIndexes(indexes, true);
             foreach (var squareEntity in squareEntityList)
             {
                 ctx.grid.Set(squareEntity.X, squareEntity.Y, squareEntity);

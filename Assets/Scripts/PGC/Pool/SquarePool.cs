@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Custom.Tool;
 using Entities;
 using PGC.Enum;
@@ -12,9 +13,12 @@ namespace PGC.Pool
     {
         private GameContext ctx;
         GameObject poolManager;
-        private List<SquarePoolModel> specialPool = new();
-        private List<SquarePoolModel> normalPool = new();
         
+        private readonly Dictionary<SquareColorEnum, Queue<SquareEntity>> specialPool = new();
+        private readonly Dictionary<SquareColorEnum, Queue<SquareEntity>> normalPool = new();
+        private readonly Queue<SquareEntity> punishmentPool = new();
+        private readonly List<SquareColorEnum> specialColors = new();
+        private readonly List<SquareColorEnum> normalColors = new();
         
         public SquarePool(GameContext ctx)
         {
@@ -25,28 +29,30 @@ namespace PGC.Pool
         void InitSquarePool()
         {
             poolManager = Object.Instantiate(ctx.assetModule.squarePoolSettings.poolManager);
+            EnqueueSquarePool(punishmentPool, ctx.assetModule.squarePoolSettings.punishmentSetting);
             foreach (var squarePoolAssetModel in ctx.assetModule.squarePoolSettings.poolSettings)
             {
-                SquarePoolModel squarePoolModel = new ();
-                squarePoolModel.squareName = squarePoolAssetModel.prefab.name;
-                EnqueueSquarePool(squarePoolModel, squarePoolAssetModel);
+                Queue<SquareEntity> squarePoolQueue = new();
+                EnqueueSquarePool(squarePoolQueue, squarePoolAssetModel);
                 if (squarePoolAssetModel.abilityType == ItemAbilityType.None)
                 {
-                    normalPool.Add(squarePoolModel);
+                    normalPool.Add(squarePoolAssetModel.squareColor, squarePoolQueue);
+                    normalColors.Add(squarePoolAssetModel.squareColor);
                 }
                 else
                 {
-                    specialPool.Add(squarePoolModel);
+                    specialPool.Add(squarePoolAssetModel.squareColor, squarePoolQueue);
+                    specialColors.Add(squarePoolAssetModel.squareColor);
                 }
             }
         }
 
-        void ExtendSquarePool(SquarePoolModel queue)
+        void ExtendSquarePool(SquareColorEnum key, Dictionary<SquareColorEnum, Queue<SquareEntity>> dic)
         {
             SquarePoolAssetModel squarePoolAssetModel = null;
             foreach (var setting in ctx.assetModule.squarePoolSettings.poolSettings)
             {
-                if (queue.squareName == setting.prefab.name)
+                if (key == setting.squareColor)
                 {
                     squarePoolAssetModel = setting;
                     break;
@@ -56,23 +62,32 @@ namespace PGC.Pool
             {
                 return;
             }
-            EnqueueSquarePool(queue, squarePoolAssetModel);
+            if (dic.TryGetValue(key, out Queue<SquareEntity> queue))
+            {
+                EnqueueSquarePool(queue, squarePoolAssetModel);
+            }
         }
 
-        void EnqueueSquarePool(SquarePoolModel queue,SquarePoolAssetModel squarePoolAssetModel)
+        void EnqueueSquarePool(Queue<SquareEntity> queue, SquarePoolAssetModel squarePoolAssetModel)
         {
             for (int i = 0; i < squarePoolAssetModel.size; i++)
             {
                 SquareEntity square = new SquareEntity(-1, -1);
                 square.SquareObj = Object.Instantiate(squarePoolAssetModel.prefab, poolManager.transform);
                 square.AbilityType = squarePoolAssetModel.abilityType;
-                square.SquareName = squarePoolAssetModel.prefab.name;
-                queue.squarePool.Enqueue(square);
+                square.SquareColor = squarePoolAssetModel.squareColor;
+                queue.Enqueue(square);
             }
+
         }
 
-        public List<SquareEntity> GetSquareByIndexes(List<Vector2Int> indexes)
+        public List<SquareEntity> GetSquareByIndexes(List<Vector2Int> indexes, bool isPunishment = false)
         {
+            if (isPunishment)
+            {
+                return GetPunishmentSquare(indexes);
+            }
+            
             if (ConstantTool.Hit(ctx.assetModule.sysSettings.specialItemHitRate))
             {
                 return GetSpecialSquareByShape(indexes);
@@ -82,16 +97,31 @@ namespace PGC.Pool
                 return GetNormalSquareByShape(indexes);
             }
         }
+        
+        public List<SquareEntity> GetPunishmentSquare(List<Vector2Int> indexes)
+        {
+            List<SquareEntity> list = new List<SquareEntity>();
+            foreach (var index in indexes)
+            {
+                SquareEntity squareEntity = punishmentPool.Dequeue();
+                squareEntity.RestIndex(index.x, index.y);
+                squareEntity.SquareObj.transform.position = ctx.grid.GetWorldPositionByIndex(index);
+                squareEntity.SquareObj.SetActive(true);
+                list.Add(squareEntity);
+            }
+            return list;
+        }
 
         public List<SquareEntity> GetNormalSquareByShape(List<Vector2Int> indexes)
         {
             List<SquareEntity> list = new List<SquareEntity>();
-            int poolIndex = Random.Range(0, normalPool.Count);
-            SquarePoolModel currentQueue = normalPool[poolIndex];
-            SquareQueueInventoryCheck(ref currentQueue, indexes.Count);
+            int poolIndex = Random.Range(0, normalColors.Count);
+            var randomKey = normalColors[poolIndex];
+            randomKey = SquareQueueInventoryCheck(randomKey, normalPool, indexes.Count);
+            Queue<SquareEntity> currentQueue = normalPool[randomKey];
             foreach (var index in indexes)
             {
-                SquareEntity squareEntity = currentQueue.squarePool.Dequeue();
+                SquareEntity squareEntity = currentQueue.Dequeue();
                 squareEntity.RestIndex(index.x, index.y);
                 squareEntity.SquareObj.transform.position = ctx.grid.GetWorldPositionByIndex(index);
                 squareEntity.SquareObj.SetActive(true);
@@ -103,16 +133,19 @@ namespace PGC.Pool
         public List<SquareEntity> GetSpecialSquareByShape(List<Vector2Int> indexes)
         {
             List<SquareEntity> list = new List<SquareEntity>();
-            SquarePoolModel currentNormalQueue = normalPool[Random.Range(0, normalPool.Count)];
-            SquareQueueInventoryCheck(ref currentNormalQueue, indexes.Count);
-            SquarePoolModel currentSpecialQueue = specialPool[Random.Range(0, specialPool.Count)];
-            SquareQueueInventoryCheck(ref currentNormalQueue, 1);
+            var randomNormalKey = normalColors[Random.Range(0, normalColors.Count)];
+            randomNormalKey = SquareQueueInventoryCheck(randomNormalKey, normalPool, indexes.Count-1);
+            Queue<SquareEntity> currentNormalQueue = normalPool[randomNormalKey];
+
+            var randomSpecialKey = specialColors[Random.Range(0, specialColors.Count)];
+            randomSpecialKey = SquareQueueInventoryCheck(randomSpecialKey, specialPool, 1);
+            Queue<SquareEntity> currentSpecialQueue = specialPool[randomSpecialKey];
+            
             int rand = Random.Range(0, indexes.Count);
             int count = 0;
             foreach (var index in indexes)
             {
-                 
-                SquareEntity squareEntity = count == rand ? currentSpecialQueue.squarePool.Dequeue() : currentNormalQueue.squarePool.Dequeue();
+                SquareEntity squareEntity = count == rand ? currentSpecialQueue.Dequeue() : currentNormalQueue.Dequeue();
                 squareEntity.RestIndex(index.x, index.y);
                 squareEntity.SquareObj.transform.position = ctx.grid.GetWorldPositionByIndex(index);
                 squareEntity.SquareObj.SetActive(true);
@@ -124,23 +157,21 @@ namespace PGC.Pool
         
         
 
-        void SquareQueueInventoryCheck(ref SquarePoolModel currentQueue, int atLestCount = 4)
+        SquareColorEnum SquareQueueInventoryCheck(SquareColorEnum randomKey, Dictionary<SquareColorEnum, Queue<SquareEntity>> dic, int atLestCount = 4)
         {
-            if (currentQueue.squarePool.Count < atLestCount)
+            Queue<SquareEntity> currentQueue = dic[randomKey];
+            if (currentQueue.Count < atLestCount)
             {
-                foreach (var normalQueue in normalPool)
+                foreach (var keyValuePair in dic)
                 {
-                    if (normalQueue.squarePool.Count >= atLestCount)
+                    if (keyValuePair.Value.Count >= atLestCount)
                     {
-                        currentQueue = normalQueue;
-                        break;
+                        return keyValuePair.Key;
                     }
                 }
+                ExtendSquarePool(randomKey, dic);
             }
-            if (currentQueue.squarePool.Count < atLestCount)
-            {
-                ExtendSquarePool(currentQueue);
-            }
+            return randomKey;
         }
         
         public void ReturnSquareByIndexes()
@@ -149,36 +180,44 @@ namespace PGC.Pool
             {
                 return;
             }
-            Dictionary<string, List<SquareEntity>> waitForDecSqDic = new Dictionary<string, List<SquareEntity>>();
+            Dictionary<SquareColorEnum, Queue<SquareEntity>> waitForDecSqDic = new ();
             foreach (var square in ctx.squaresWaitForDestroy.squares)
             {
-                if (waitForDecSqDic.TryGetValue(square.SquareName, out List<SquareEntity> list))
+                if (waitForDecSqDic.TryGetValue(square.SquareColor, out Queue<SquareEntity> queue))
                 {
-                    list.Add(square);
+                    queue.Enqueue(square);
                 }
                 else
                 {
-                    waitForDecSqDic.Add(square.SquareName, new List<SquareEntity>()
-                    {
-                        square
-                    });
+                    waitForDecSqDic.Add(square.SquareColor, new Queue<SquareEntity>(new[] {square}));
                 }
             }
             DeactivateSquarePool(waitForDecSqDic, specialPool);
             DeactivateSquarePool(waitForDecSqDic, normalPool);
+            if (waitForDecSqDic.TryGetValue(ctx.assetModule.squarePoolSettings.punishmentSetting.squareColor,
+                    out Queue<SquareEntity> punishmentQueue))
+            {
+                while (punishmentQueue.Count > 0)
+                {
+                    SquareEntity squareEntity = punishmentQueue.Dequeue();
+                    squareEntity.SquareObj.SetActive(false);
+                    punishmentPool.Enqueue(squareEntity);
+                }
+            }
             ctx.squaresWaitForDestroy.squares.Clear();
         }
 
-        void DeactivateSquarePool(Dictionary<string, List<SquareEntity>> squarePoolDic, List<SquarePoolModel> squarePoolModelList)
+        void DeactivateSquarePool(Dictionary<SquareColorEnum, Queue<SquareEntity>> waitForDecSqDic, Dictionary<SquareColorEnum, Queue<SquareEntity>> squarePoolDic)
         {
-            foreach (var squarePoolModel in squarePoolModelList)
+            foreach (var keyValuePair in waitForDecSqDic)
             {
-                if (squarePoolDic.TryGetValue(squarePoolModel.squareName, out List<SquareEntity> list))
+                if (squarePoolDic.TryGetValue(keyValuePair.Key, out Queue<SquareEntity> queue))
                 {
-                    foreach (var squareEntity in list)
+                    while (keyValuePair.Value.Count > 0)
                     {
-                        squarePoolModel.squarePool.Enqueue(squareEntity);
+                        SquareEntity squareEntity = keyValuePair.Value.Dequeue();
                         squareEntity.SquareObj.SetActive(false);
+                        queue.Enqueue(squareEntity);
                     }
                 }
             }
