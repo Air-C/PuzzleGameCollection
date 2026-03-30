@@ -70,6 +70,10 @@ namespace PGC.ModuleAsset
                 currentMissionSetting.missionID = 1;
                 currentMissionSetting.moveSystemMoveInterval = sysSettings.moveSystemMoveInterval;
                 currentMissionSetting.moveSystemAutoMoveInterval = sysSettings.moveSystemAutoMoveInterval;
+                currentMissionSetting.horizontalMoveDelay = sysSettings.horizontalMoveDelay;
+                currentMissionSetting.specialItemHitRate = sysSettings.specialItemHitRate;
+                currentMissionSetting.enableSpecialItems = true;
+                currentMissionSetting.specialItemMode = SpecialItemMode.PositiveOnly;
             });
             
             yield return LoadAsset<ItemTable>("ItemTable", (table) =>

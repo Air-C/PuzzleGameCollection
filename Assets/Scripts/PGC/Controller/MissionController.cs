@@ -42,7 +42,7 @@ namespace Controller
             }
         }
 
-        public void updateMission()
+        public void UpdateMission()
         {
             if (!ctx.gameSystemState.isRunning)
             {

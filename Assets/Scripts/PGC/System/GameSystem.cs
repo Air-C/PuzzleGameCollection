@@ -89,7 +89,7 @@ namespace PGC
 
         public void UpdateGame()
         {
-            missionController.updateMission();
+            missionController.UpdateMission();
             ctx.inputModule.Update(Time.deltaTime);
             clearLineSystem.ClearWaitForClearModel();
             scoreSystem.ScoreClearSquare();
