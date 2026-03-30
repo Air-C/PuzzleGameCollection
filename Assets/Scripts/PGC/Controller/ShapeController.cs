@@ -97,8 +97,6 @@ namespace Controller
             {
                 Vector2Int newIndex = ConstantTool.GetNewIndexOfVerticalMove(square.X, square.Y,verticalValue);
                 square.Y = newIndex.y;
-                // Vector3 worldPos = ctx.grid.GetWorldPositionByIndex(new Vector2Int(square.X, square.Y));
-                // square.SquareObj.transform.position = worldPos;
             }
         }
 

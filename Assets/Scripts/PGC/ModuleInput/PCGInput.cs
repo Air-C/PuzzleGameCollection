@@ -127,6 +127,15 @@ public partial class @PCGInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Change"",
+                    ""type"": ""Button"",
+                    ""id"": ""24a453ee-0205-4eee-bb16-4975eb02c256"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -206,6 +215,17 @@ public partial class @PCGInput: IInputActionCollection2, IDisposable
                     ""action"": ""Rotate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a7379abf-f22a-4b96-bd83-8030d62883e0"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Change"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -218,6 +238,7 @@ public partial class @PCGInput: IInputActionCollection2, IDisposable
         m_Square_MoveRight = m_Square.FindAction("MoveRight", throwIfNotFound: true);
         m_Square_MoveDown = m_Square.FindAction("MoveDown", throwIfNotFound: true);
         m_Square_Rotate = m_Square.FindAction("Rotate", throwIfNotFound: true);
+        m_Square_Change = m_Square.FindAction("Change", throwIfNotFound: true);
     }
 
     ~@PCGInput()
@@ -302,6 +323,7 @@ public partial class @PCGInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Square_MoveRight;
     private readonly InputAction m_Square_MoveDown;
     private readonly InputAction m_Square_Rotate;
+    private readonly InputAction m_Square_Change;
     /// <summary>
     /// Provides access to input actions defined in input action map "Square".
     /// </summary>
@@ -329,6 +351,10 @@ public partial class @PCGInput: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Square/Rotate".
         /// </summary>
         public InputAction @Rotate => m_Wrapper.m_Square_Rotate;
+        /// <summary>
+        /// Provides access to the underlying input action "Square/Change".
+        /// </summary>
+        public InputAction @Change => m_Wrapper.m_Square_Change;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -367,6 +393,9 @@ public partial class @PCGInput: IInputActionCollection2, IDisposable
             @Rotate.started += instance.OnRotate;
             @Rotate.performed += instance.OnRotate;
             @Rotate.canceled += instance.OnRotate;
+            @Change.started += instance.OnChange;
+            @Change.performed += instance.OnChange;
+            @Change.canceled += instance.OnChange;
         }
 
         /// <summary>
@@ -390,6 +419,9 @@ public partial class @PCGInput: IInputActionCollection2, IDisposable
             @Rotate.started -= instance.OnRotate;
             @Rotate.performed -= instance.OnRotate;
             @Rotate.canceled -= instance.OnRotate;
+            @Change.started -= instance.OnChange;
+            @Change.performed -= instance.OnChange;
+            @Change.canceled -= instance.OnChange;
         }
 
         /// <summary>
@@ -458,5 +490,12 @@ public partial class @PCGInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnRotate(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Change" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnChange(InputAction.CallbackContext context);
     }
 }

@@ -11,6 +11,8 @@ namespace PGC.ModuleInput
         public InputModel<int> horizontalMove = new InputModel<int>();
         public InputModel<int> verticalMove = new InputModel<int>();
         public InputModel<int> rotate = new InputModel<int>();
+        
+        public bool isPressedChange = false;
 
         public float holdTimer = 0;
         
@@ -63,6 +65,11 @@ namespace PGC.ModuleInput
                 rotate.value = 1;
                 rotate.status = rotateStatus;
             }
+
+            if (squareActions.Change.WasPressedThisFrame())
+            {
+                isPressedChange = true;
+            }
         }
 
         static InputStatus GetStatus(InputAction action)
@@ -92,6 +99,8 @@ namespace PGC.ModuleInput
             
             rotate.value = 0;
             rotate.status = InputStatus.None;
+            
+            isPressedChange = false;
         }
 
     }

@@ -58,6 +58,11 @@ namespace PGC.ModuleMove
             {
                 shapeController.ShapeRotate(ctx.inputModule.rotate.value);
             }
+
+            if (ctx.inputModule.isPressedChange)
+            {
+                shapeController.ResetShapePreview();
+            }
             ctx.inputModule.RestInput();
             sinceLastMoveTime -= ctx.assetModule.sysSettings.moveSystemMoveInterval;
         }
