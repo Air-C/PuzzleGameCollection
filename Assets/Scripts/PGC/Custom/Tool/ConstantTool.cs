@@ -1,7 +1,6 @@
-﻿using Entities;
-using Unity.Mathematics;
+﻿using System;
+using Entities;
 using UnityEngine;
-using MoveDirection = PGC.Enum.MoveDirection;
 using Random = System.Random;
 
 namespace Custom.Tool
@@ -41,6 +40,13 @@ namespace Custom.Tool
         public static bool Hit(float probability)
         {
             return UnityEngine.Random.value < probability;
+        }
+
+        public static T GetEnumNext<T>(T value)
+        {
+            T[] values = (T[])Enum.GetValues(typeof(T));
+            int index = Array.IndexOf(values, value);
+            return values[(index+1) % values.Length];
         }
     }
 

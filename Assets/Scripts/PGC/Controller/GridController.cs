@@ -82,14 +82,68 @@ namespace Controller
                 
                 if (newIndex.x < 0 || newIndex.x >= ctx.grid.GridBorder.x )
                 {
-                    return false;
+                    return TryWallKick();
                 }
                 if (newIndex.y < 0 || ctx.grid.GridIndexIsNotNull(newIndex.x,newIndex.y ))
                 {
                     ctx.currentShapeIsReachedBottom = true;
+                    return TryWallKick();
+                }
+            }
+            return true;
+        }
+
+        private bool TryWallKick()
+        {
+            // 计算旋转前后的状态
+            ShapeRotateStatusEnum fromStatus = ctx.currentSquareShape.RotateStatus;
+            ShapeRotateStatusEnum toStatus = ConstantTool.GetEnumNext(fromStatus);
+            
+            // 获取当前形状类型
+            ShapeTypeEnum shapeType = ctx.currentSquareShape.ShapeType;
+            
+            // 获取wallkick规则
+            Vector2Int[] wallKickRules = ctx.currentSquareShape.GetWallKickRules(fromStatus, toStatus, shapeType);
+            if (wallKickRules == null)
+            {
+                return false;
+            }
+            
+            // 尝试每个wallkick规则
+            foreach (var offset in wallKickRules)
+            {
+                if (IsCanMoveWithOffset(offset))
+                {
+                    // 记录成功的wallkick规则
+                    ctx.currentSquareShape.SetWallKick(new Vector2Int[] { offset });
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+        
+                
+        private bool IsCanMoveWithOffset(Vector2Int offset)
+        {
+            List<SquareEntity> squares = ctx.currentSquareShape.GetSquares();
+            SquareEntity pivotSquare = squares[0];
+            
+            foreach (var square in squares)
+            {
+                Vector2Int newIndex = ConstantTool.GetNewIndexOfRotate(square.X, square.Y, pivotSquare);
+                newIndex += offset;
+                
+                if (newIndex.x < 0 || newIndex.x >= ctx.grid.GridBorder.x)
+                {
+                    return false;
+                }
+                if (newIndex.y < 0 || ctx.grid.GridIndexIsNotNull(newIndex.x, newIndex.y))
+                {
                     return false;
                 }
             }
+            
             return true;
         }
 

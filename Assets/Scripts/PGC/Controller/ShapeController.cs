@@ -57,6 +57,8 @@ namespace Controller
                     ctx.currentSquareShape.AddSquare(squareEntity);
                 }
             }
+            // 设置形状类型
+            ctx.currentSquareShape.ShapeType = shapeSo.type;
             ResetShapePreview();
         }
 
@@ -119,6 +121,20 @@ namespace Controller
                 square.X = newIndex.x ;
                 square.Y = newIndex.y ;
             }
+            
+            // 应用wallkick位移
+            if (ctx.currentSquareShape.waitForExcWallKick != null && ctx.currentSquareShape.waitForExcWallKick.Length > 0)
+            {
+                Vector2Int offset = ctx.currentSquareShape.waitForExcWallKick[0];
+                foreach (var square in squares)
+                {
+                    square.X += offset.x;
+                    square.Y += offset.y;
+                }
+                ctx.currentSquareShape.ClearWallKick();
+            }
+            
+            ctx.currentSquareShape.RotateStatusMoveNext();
         }
         
         
