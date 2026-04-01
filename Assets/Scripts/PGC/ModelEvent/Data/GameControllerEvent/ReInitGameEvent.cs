@@ -1,6 +1,6 @@
 ﻿namespace PGC.ModelEvent.Data
 {
-    public class RestartGameEvent
+    public class ReInitGameEvent
     {
         
     }

@@ -36,7 +36,6 @@ namespace PGC.Popup
 
         private void Awake()
         {
-
             
         }
 

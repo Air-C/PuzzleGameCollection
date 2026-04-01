@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Controller;
-using PGC.Enum;
 using PGC.ModelEvent.Data;
 using PGC.ModuleClearLine;
-using PGC.ModuleClearLine.Model;
 using PGC.ModuleItem;
 using PGC.ModuleMove;
 using PGC.System;
+using PGC.ModuleAudio;
 using PGC.VFX;
 using UnityEngine.UI;
 using ScoreSystem = PGC.ModuleScore.ScoreSystem;
@@ -26,6 +24,7 @@ namespace PGC
         RenderSystem renderSystem;
         VFXSystem vfxSystem;
         ItemSystem itemSystem;
+        AudioManager audioManager;
 
         private float restTime;
         private float tickTime;
@@ -41,6 +40,7 @@ namespace PGC
             SubscribeEvents();
             ctx.pauseGameButton.GetComponent<Button>().onClick.AddListener(PauseGame);
             tickTime = ctx.assetModule.sysSettings.gameSystemTickTime;
+            
             Debug.Log($"System tick time: {tickTime}");
         }
 
@@ -53,6 +53,7 @@ namespace PGC
             renderSystem = new RenderSystem(ctx);
             vfxSystem = new VFXSystem(ctx);
             itemSystem = new ItemSystem(ctx);
+            audioManager = new AudioManager(ctx);
         }
         
         void SubscribeEvents()
@@ -60,19 +61,56 @@ namespace PGC
             ctx.eventBus.Subscribe<PreviewShapeChangeEvent>(renderSystem.OnResetShapePreview);
             ctx.eventBus.Subscribe<SquareClearedEvent>(vfxSystem.OnLineCleared);
             ctx.eventBus.Subscribe<GameOverEvent>(OnGameOver);
-            ctx.eventBus.Subscribe<RestartGameEvent>(OnRestartGame);
+            ctx.eventBus.Subscribe<ReInitGameEvent>(OnRestartGame);
             ctx.eventBus.Subscribe<ReturnMenuEvent>(OnReturnMenu);
             ctx.eventBus.Subscribe<AddItemEvent>(itemSystem.OnGenerateItem);
             ctx.eventBus.Subscribe<ItemBarChangeEvent>(renderSystem.OnItemBarChanged);
             ctx.eventBus.Subscribe<ItemEffectEvent>(itemSystem.OnPositiveItemEffect);
             ctx.eventBus.Subscribe<ItemEffectEvent>(itemSystem.OnNegativeItemEffect);
+            ctx.eventBus.Subscribe<StartGameEvent>(OnStartGame);
+            ctx.eventBus.Subscribe<ExitGameEvent>(OnExitGame);
+            ctx.eventBus.Subscribe<MissionSetEvent>(missionController.OnSetMissionLevel);
+            ctx.eventBus.Subscribe<VolumeChangeEvent>(audioManager.OnSetVolume);
+            ctx.eventBus.Subscribe<BackGroundMusicSwitchEvent>(audioManager.OnBackGroundMusicSwitch);
+            
         }
 
         public void InitGame()
         {
+            // 设置初始任务等级为1
+            missionController.SetCurrentMission(1);
+            renderSystem.ShowStartMenu();
+            // 初始化音频系统
+            InitializeAudioSystem();
+        }
+
+        public void OnStartGame(StartGameEvent e)
+        {
+            renderSystem.HideStartMenu();
             ctx.gameSystemState.isRunning = true;
-            // 设置初始任务等级为1，确保不触发惩罚道具
-            missionController.SetMissionLevel(1);
+        }
+
+        public void OnExitGame(ExitGameEvent e)
+        {
+            Application.Quit();
+        }
+        
+        void InitializeAudioSystem()
+        {
+            if (ctx.assetModule.audioSourcePrefab != null)
+            {
+                // 创建音频对象
+                var audioObject = UnityEngine.Object.Instantiate(ctx.assetModule.audioSourcePrefab);
+                audioObject.name = "AudioManager";
+                var audioSource = audioObject.GetComponent<AudioSource>();
+                if (audioSource != null)
+                {
+                    ctx.audioSource = audioSource;
+                    audioManager.SetAudioSource(audioSource);
+                    // 播放背景音乐
+                    audioManager.PlayBackgroundMusic(PGC.Enum.AudiosEnum.BackMusic);
+                }
+            }
         }
         
         public void Tick()
@@ -102,6 +140,7 @@ namespace PGC
         {
             ctx.gameSystemState.isRunning = false;
             renderSystem.ShowPausePopup();
+            audioManager.PauseAudio();
         }
         
         
@@ -109,14 +148,17 @@ namespace PGC
         {
             ctx.gameSystemState.isRunning = false;
             renderSystem.ShowGameOverPopup();
+            audioManager.StopAudio();
         }
 
         void OnReturnMenu(ReturnMenuEvent e)
         {
             Debug.Log("todo OnReturnMenu");
+            ResetGameData();
+            renderSystem.ShowStartMenu();
         }
         
-        void OnRestartGame(RestartGameEvent e)
+        void OnRestartGame(ReInitGameEvent e)
         {
             RestartGame();
         }
@@ -126,6 +168,8 @@ namespace PGC
             //todo data init
             ResetGameData();
             ctx.gameSystemState.isRunning = true;
+            // 重新初始化音频系统
+            InitializeAudioSystem();
         }
 
         void ResetGameData()

@@ -55,6 +55,11 @@ namespace PGC
         public List<ItemBarModel> itemsBar = new ();
         public GameObject shapePreviewBar;
         public GameObject pauseGameButton;
+        public AudioSource audioSource;
+        public GameObject startMenu;
+        public GameObject settingsBar;
+        public Image backGroundUI;
+        public Slider loadingUI;
         
         public Queue<WaitForClearModel> clearModels = new ();
 

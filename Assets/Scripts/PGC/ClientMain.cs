@@ -15,6 +15,7 @@ using PGC.Pool;
 using PGC.System;
 using PGC.VFX;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using ScoreSystem = PGC.ModuleScore.ScoreSystem;
 
@@ -28,6 +29,15 @@ namespace PGC
         private GameObject shapePreviewBar;
         [SerializeField]
         private GameObject pauseGameButton;
+        [SerializeField]
+        private GameObject startMenu;
+        [SerializeField]
+        private GameObject settingsBar;
+        [SerializeField]
+        private Image backGroundUI;
+        [SerializeField]
+        private Slider loadingUI;
+
         GameContext ctx = new ();
         bool isAssetLoaded;
         GameSystem gameSystem;
@@ -35,7 +45,7 @@ namespace PGC
         
         private void Awake()
         {
-            ctx.assetModule = new AssetModule();
+            ctx.assetModule = new AssetModule(ctx);
             StartCoroutine(PreLoadAssets());
 
             ctx.inputModule = new InputModule();
@@ -57,6 +67,10 @@ namespace PGC
             }
             ctx.shapePreviewBar = shapePreviewBar;
             ctx.pauseGameButton = pauseGameButton;
+            ctx.startMenu = startMenu;
+            ctx.settingsBar = settingsBar;
+            ctx.backGroundUI = backGroundUI;
+            ctx.loadingUI = loadingUI;
         }
 
         private void Start()
@@ -87,7 +101,10 @@ namespace PGC
             ctx.squarePool = new SquarePool(ctx);
             gameSystem = new GameSystem(ctx);
             isAssetLoaded = true;
+            ctx.loadingUI.value = 1;
             gameSystem.InitGame();
+            ctx.loadingUI.gameObject.SetActive(false);
+            ctx.backGroundUI.transform.SetAsFirstSibling();
             Debug.Log($"Assets Loaded:{isAssetLoaded}");
         }
 

@@ -7,5 +7,6 @@ namespace PGC.ModelEvent.Data
     {
         public ItemAbilityType type;
         public GameObject itemPrefab;
+        public int count = 1;
     }
 }

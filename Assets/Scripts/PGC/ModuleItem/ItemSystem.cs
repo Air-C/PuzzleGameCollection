@@ -90,11 +90,30 @@ namespace PGC.ModuleItem
             return noneBar?.type ?? ItemAbilityType.None;
         }
         
+        void DecreaseItemCount(ItemAbilityType type)
+        {
+            foreach (var itemBar in ctx.itemsBar)
+            {
+                if (itemBar.type == type)
+                {
+                    itemBar.count--;
+                    // 发布道具栏变化事件
+                    ctx.eventBus.Publish(new ItemBarChangeEvent()
+                    {
+                        type = itemBar.type,
+                        itemPrefab = ctx.assetModule.itemTable[type].Prefab
+                    });
+                    break;
+                }
+            }
+        }
+        
         public void OnPositiveItemEffect(ItemEffectEvent e)
         {
             if (positiveActions.TryGetValue(e.type, out Action action))
             {
                 action.Invoke();
+                DecreaseItemCount(e.type);
             }
         }
 

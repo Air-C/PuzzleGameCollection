@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using PGC;
+using PGC.ModelEvent.Data;
 using PGC.System;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ namespace Controller
         private GameContext ctx;
         ShapeController shapeController;
         GridController gridController;
-
+        List<int> missionIds = new List<int>();
         Dictionary<int, MissionSetting> missionSettings = new Dictionary<int, MissionSetting>();
 
 
@@ -24,17 +25,20 @@ namespace Controller
             foreach (var missionSetting in ctx.assetModule.sysSettings.missionSettings)
             {
                 missionSettings.Add(missionSetting.missionID, missionSetting);
+                missionIds.Add(missionSetting.missionID);
             }
         }
         
-        public void SetMissionLevel(int level)
+        public void OnSetMissionLevel(MissionSetEvent e)
         {
-            missionLevel = level;
+            int index = e.code < missionIds.Count ? e.code : missionIds.Count - 1;
+            int level = missionIds[index];
             SetCurrentMission(level);
         }
         
-        void SetCurrentMission(int level)
+        public void SetCurrentMission(int level)
         {
+            missionLevel = level;
             if (missionSettings.TryGetValue(level, out MissionSetting missionSetting))
             {
                 // todo 配置改用currentMissionSetting

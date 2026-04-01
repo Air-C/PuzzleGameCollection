@@ -24,6 +24,41 @@ namespace PGC.System
             this.ctx = ctx;
         }
         
+        
+        public void ShowStartMenu()
+        {
+            StartMenuListener startMenuListener = ctx.startMenu.GetComponent<StartMenuListener>();
+            Debug.Log("enter ShowStartMenu");
+            if (startMenuListener != null && startMenuListener.isUnsetEvent)
+            {
+                Debug.Log("register ShowStartMenu");
+                startMenuListener.SettingsButton.onClick.AddListener(ShowSettingsBar);
+                startMenuListener.StartGameButton.onClick.AddListener(() => { ctx.eventBus.Publish(new StartGameEvent()); Debug.Log("click start");});
+                startMenuListener.ExitGameButton.onClick.AddListener(() => { ctx.eventBus.Publish(new ExitGameEvent());});
+                startMenuListener.MissionDropdown.onValueChanged.AddListener((value) => { ctx.eventBus.Publish(new MissionSetEvent(value));});
+                startMenuListener.VolumeSlider.onValueChanged.AddListener((value) => { ctx.eventBus.Publish(new VolumeChangeEvent(value));});
+                startMenuListener.VolumeSlider.value = 1;
+                startMenuListener.BackGroundMusicToggle.onValueChanged.AddListener((value) => { ctx.eventBus.Publish(new BackGroundMusicSwitchEvent(value));});
+                startMenuListener.isUnsetEvent = false;
+            }
+            ctx.startMenu.SetActive(true);
+        }
+
+        public void HideStartMenu()
+        {
+            ctx.startMenu.SetActive(false);
+        }
+
+        public void ShowSettingsBar()
+        {
+            ctx.settingsBar.SetActive(!ctx.settingsBar.activeSelf);
+        }
+
+        public void CloseStartMenu()
+        {
+            ctx.startMenu.SetActive(false);
+        }
+        
         public void ShowPausePopup()
         {
             Debug.Log("ShowPausePopup");
@@ -52,7 +87,7 @@ namespace PGC.System
                 {
                     onClick = () =>
                     {
-                        ctx.eventBus.Publish(new RestartGameEvent());
+                        ctx.eventBus.Publish(new ReInitGameEvent());
                         popup.gameObject.SetActive(false);
                     };
                 }
