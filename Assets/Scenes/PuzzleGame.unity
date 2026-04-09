@@ -8042,12 +8042,12 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1677769593}
   - {fileID: 1081416944}
   - {fileID: 1380864263}
   - {fileID: 1034539999}
   - {fileID: 971591391}
   - {fileID: 1526069526}
+  - {fileID: 1677769593}
   - {fileID: 1139248490}
   - {fileID: 1296865983}
   m_Father: {fileID: 0}

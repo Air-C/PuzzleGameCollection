@@ -54,8 +54,8 @@ namespace PGC.ModuleAsset
             RegisterAssetLoadInfo("Square", 1f);
             RegisterAssetLoadInfo("Shape", 1f);
             RegisterAssetLoadInfo("GridSo", 1f);
-            RegisterAssetLoadInfo("DestroyParticle", 1f);
-            RegisterAssetLoadInfo("ParticlePoolSettings", 1f);
+            // RegisterAssetLoadInfo("DestroyParticle", 1f);
+            // RegisterAssetLoadInfo("ParticlePoolSettings", 1f);
             RegisterAssetLoadInfo("SquarePoolSettings", 1f);
             RegisterAssetLoadInfo("PGCSettings", 1f);
             RegisterAssetLoadInfo("ItemTable", 1f);
@@ -77,44 +77,37 @@ namespace PGC.ModuleAsset
                         audioClipDic.Add(audioEnum, audio);
                     }
                 }
-                UpdateProgress("Audio");
             });
             
             yield return LoadAssets<SquareSo>("Square", (squareList) =>
             {
                 squareSoList.AddRange(squareList);  
-                UpdateProgress("Square");
             });
 
             yield return LoadAssets<SquareShapeSo>("Shape", (shapeList) =>
             {
                 squareShapeSoList.AddRange(shapeList);
-                UpdateProgress("Shape");
             });
             
             yield return LoadAsset<GridSo>("GridSo", (gridSoAsset) =>
             {
                 gridSo = gridSoAsset;
-                UpdateProgress("GridSo");
             });
             
 
             yield return LoadAsset<GameObject>("DestroyParticle", (particle) =>
             {
                 destroyParticleSystemPrefab = particle;
-                UpdateProgress("DestroyParticle");
             });
             
             yield return LoadAsset("ParticlePoolSettings", (ParticlePoolSettings settings) =>
             {
                 particlePoolSettings = settings;
-                UpdateProgress("ParticlePoolSettings");
             });
             
             yield return LoadAsset<SquarePoolSettings>("SquarePoolSettings", (settings) =>
             {
                 squarePoolSettings = settings;
-                UpdateProgress("SquarePoolSettings");
             });
             
             yield return LoadAsset<SystemSettings>("PGCSettings", (settings) =>
@@ -128,7 +121,6 @@ namespace PGC.ModuleAsset
                 currentMissionSetting.specialItemHitRate = sysSettings.specialItemHitRate;
                 currentMissionSetting.enableSpecialItems = true;
                 currentMissionSetting.specialItemMode = SpecialItemMode.PositiveOnly;
-                UpdateProgress("PGCSettings");
             });
             
             yield return LoadAsset<ItemTable>("ItemTable", (table) =>
@@ -137,7 +129,6 @@ namespace PGC.ModuleAsset
                 {
                     itemTable.Add(itemEntity.AbilityType, itemEntity);
                 }
-                UpdateProgress("ItemTable");
             });
             
             yield return LoadAssets<GameObject>("Popup", (popups) =>
@@ -154,7 +145,6 @@ namespace PGC.ModuleAsset
                         Debug.LogError($"{popup.name} is not define");
                     }
                 }
-                UpdateProgress("Popup");
             });
 
             yield return LoadAssets<Sprite>("ShapeImage", (shapeImagePrefabs) =>
@@ -171,13 +161,11 @@ namespace PGC.ModuleAsset
                         Debug.LogError($"{sprite.name} is not define");
                     }
                 }
-                UpdateProgress("ShapeImage");
             });
 
             yield return LoadAsset<GameObject>("AudioSourcePrefab", (prefab) =>
             {
                 audioSourcePrefab = prefab;
-                UpdateProgress("AudioSourcePrefab");
             });
             
             // 确保进度达到0.9
@@ -216,13 +204,12 @@ namespace PGC.ModuleAsset
                 info.IsLoaded = true;
                 CurrentProgress += info.Weight;
                 ctx.loadingUI.value = CurrentProgress;
-                Debug.Log($"Asset {assetName} loaded. Progress: {CurrentProgress:F2}/{TOTAL_PROGRESS}");
+                // Debug.Log($"Asset {assetName} loaded. Progress: {CurrentProgress:F2}/{TOTAL_PROGRESS}");
             }
         }
         
         public IEnumerator LoadAssets<T>(string label, Action<IList<T>> callback)
         {
-            Debug.Log($"Loading assets: {label}");
             var handle =  Addressables.LoadAssetsAsync<T>(label, null);
             yield return handle;
             if (handle.Status != AsyncOperationStatus.Succeeded)
@@ -233,11 +220,11 @@ namespace PGC.ModuleAsset
                 yield break;
             }
             callback?.Invoke(handle.Result);
+            UpdateProgress(label);
         }
         
         public IEnumerator LoadAsset<T>(string key, Action<T> callback)
         {
-            Debug.Log($"Loading asset: {key}");
             var handle =  Addressables.LoadAssetAsync<T>(key);
             yield return handle;
             if (handle.Status != AsyncOperationStatus.Succeeded)
@@ -248,6 +235,7 @@ namespace PGC.ModuleAsset
                 yield break;
             }
             callback?.Invoke(handle.Result);
+            UpdateProgress(key);
         }
 
         public bool ShapeSoTryGetRandom(out SquareShapeSo squareShapeSo)

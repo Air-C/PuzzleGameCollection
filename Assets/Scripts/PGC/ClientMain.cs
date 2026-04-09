@@ -75,7 +75,8 @@ namespace PGC
 
         void Start()
         {
-            
+            ctx.runningTimes += Time.deltaTime;
+            // Debug.Log("end StartTimes:"+ctx.runningTimes);
         }
         float deltaTime = 0.0f;
         private void OnGUI()
@@ -94,6 +95,8 @@ namespace PGC
 
         void Update()
         {
+            ctx.loadTimes += Time.deltaTime;
+
             deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
             if (ctx.gameSystemState.isRunning == false)
             {
@@ -105,7 +108,6 @@ namespace PGC
             {
                 StartCoroutine(ctx.particlePool.DeactivateParticle());
             }
-            
         }
 
         IEnumerator PreLoadAssets()
@@ -120,7 +122,7 @@ namespace PGC
             gameSystem.InitGame();
             ctx.loadingUI.gameObject.SetActive(false);
             ctx.backGroundUI.transform.SetAsFirstSibling();
-            Debug.Log($"Assets Loaded:{isAssetLoaded}");
+            // Debug.Log($"Assets Loaded:{isAssetLoaded},loadTimes:{ctx.loadTimes}");
         }
 
         void ObjectRequireCheck()
@@ -153,6 +155,21 @@ namespace PGC
                     Debug.LogWarning($"{warnMsg}: Component {component} not exists");
                 }
             }
+            
+        }
+
+        private void OnApplicationQuit()
+        {
+            TearDown();
+        }
+
+        private void OnDestroy()
+        {
+            TearDown();
+        }
+
+        void TearDown()
+        {
             
         }
 

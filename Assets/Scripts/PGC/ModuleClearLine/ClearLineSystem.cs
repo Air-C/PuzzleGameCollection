@@ -59,7 +59,6 @@ namespace PGC.ModuleClearLine
 
         void ClearSquares(List<Vector2Int> indexes)
         {
-            Debug.Log($"OnClearInvoke:{indexes.ToArray()}");
 
             List<ItemAbilityType> itemTypes = new ();
 

@@ -56,8 +56,6 @@ namespace PGC.Entities.Grid
             gridTopCenter = ctx.assetModule.gridSo.gridTopCenter;
             gridWorldWidth = ctx.assetModule.gridSo.gridWorldWidth;
             initWorldPosition = ctx.assetModule.gridSo.initWorldPosition;
-            
-            Debug.Log($"initWorldPosition {initWorldPosition}");
         }
 
         public void LockSquares(GameContext ctx)

@@ -19,6 +19,9 @@ namespace PGC
 {
     public class GameContext
     {
+        public float runningTimes=0;
+        public float loadTimes=0;
+        
         // entity
         public SquareShapeEntity currentSquareShape;
         public bool currentShapeIsReachedBottom = false;

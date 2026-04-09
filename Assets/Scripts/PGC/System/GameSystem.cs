@@ -40,8 +40,6 @@ namespace PGC
             SubscribeEvents();
             ctx.pauseGameButton.GetComponent<Button>().onClick.AddListener(PauseGame);
             tickTime = ctx.assetModule.sysSettings.gameSystemTickTime;
-            
-            Debug.Log($"System tick time: {tickTime}");
         }
 
         void InitSystem()

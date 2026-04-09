@@ -1,7 +1,0 @@
-﻿{
-  "name": "Game.Test",
-  "references": [
-    "Game.Runtime"
-  ],
-  "includePlatforms": ["Editor"]
-}

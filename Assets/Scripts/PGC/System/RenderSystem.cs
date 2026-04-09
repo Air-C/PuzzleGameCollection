@@ -28,10 +28,8 @@ namespace PGC.System
         public void ShowStartMenu()
         {
             StartMenuListener startMenuListener = ctx.startMenu.GetComponent<StartMenuListener>();
-            Debug.Log("enter ShowStartMenu");
             if (startMenuListener != null && startMenuListener.isUnsetEvent)
             {
-                Debug.Log("register ShowStartMenu");
                 startMenuListener.SettingsButton.onClick.AddListener(ShowSettingsBar);
                 startMenuListener.StartGameButton.onClick.AddListener(() => { ctx.eventBus.Publish(new StartGameEvent()); Debug.Log("click start");});
                 startMenuListener.ExitGameButton.onClick.AddListener(() => { ctx.eventBus.Publish(new ExitGameEvent());});
@@ -61,12 +59,10 @@ namespace PGC.System
         
         public void ShowPausePopup()
         {
-            Debug.Log("ShowPausePopup");
             PopupListener popup = popupManager.GetPopup(ctx, PopupEnum.PausePopup);
             Dictionary<string, Action> popupActions = new Dictionary<string, Action>();
             foreach (var button in popup.ButtonList)
             {
-                Debug.Log($"register Action button:{button.name}");
                 popupActions.Add(button.name, () =>
                 {
                     ctx.gameSystemState.isRunning = true;

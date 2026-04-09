@@ -18,8 +18,6 @@ namespace PGC.ModuleMove
             this.ctx = ctx;
             shapeController = new ShapeController(ctx);
             gridController = new GridController(ctx);
-            Debug.Log($"System moveInterval: {ctx.assetModule.currentMissionSetting.moveSystemMoveInterval}");
-            Debug.Log($"System autoMoveInterval: {ctx.assetModule.currentMissionSetting.moveSystemAutoMoveInterval}");
         }
         
         public void Update()
