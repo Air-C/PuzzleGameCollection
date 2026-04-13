@@ -95,7 +95,7 @@ namespace PGC
         
         void InitializeAudioSystem()
         {
-            if (ctx.assetModule.audioSourcePrefab != null)
+            if (ctx.assetModule.audioSourcePrefab != null && ctx.audioSource == null)
             {
                 // 创建音频对象
                 var audioObject = UnityEngine.Object.Instantiate(ctx.assetModule.audioSourcePrefab);
