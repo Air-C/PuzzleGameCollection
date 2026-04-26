@@ -1,13 +1,18 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
+using DG.Tweening;
 using Entities;
 using PGC.Enum;
 using PGC.ModelEvent.Data;
+using PGC.ModuleEasing;
+using PGC.ModuleEasing.Enum;
 using PGC.ModuleItem.Model;
 using PGC.Popup;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 using Vector3 = UnityEngine.Vector3;
@@ -49,6 +54,14 @@ namespace PGC.System
 
         public void ShowSettingsBar()
         {
+            if (ctx.settingsBar.activeSelf)
+            {
+                ctx.settingsBar.transform.DOScale(1f, 0.5f);
+            }
+            else
+            {
+                ctx.settingsBar.transform.DOScale(1.5f, 0.5f);
+            }
             ctx.settingsBar.SetActive(!ctx.settingsBar.activeSelf);
         }
 
@@ -60,39 +73,40 @@ namespace PGC.System
         public void ShowPausePopup()
         {
             PopupListener popup = popupManager.GetPopup(ctx, PopupEnum.PausePopup);
-            Dictionary<string, Action> popupActions = new Dictionary<string, Action>();
-            foreach (var button in popup.ButtonList)
-            {
-                popupActions.Add(button.name, () =>
-                {
-                    ctx.gameSystemState.isRunning = true;
-                    popup.gameObject.SetActive(false);
-                });
-            }
-            popup.Init(popupActions);
+            popup.transform.DOScale(1.5f, 0.5f);
+            RegisterButtonOnClick(popup);
         }
         
         public void ShowGameOverPopup()
         {
             PopupListener popup = popupManager.GetPopup(ctx, PopupEnum.GameOverPopup);
+            popup.transform.DOScale(1.2f, 0.5f);
+            RegisterButtonOnClick(popup);
+        }
+
+        // 新按钮添加在此添加注册方法
+        private void RegisterButtonOnClick(PopupListener popup)
+        {
             Dictionary<string, Action> popupActions = new Dictionary<string, Action>();
+            Action onClick;
             foreach (var button in popup.ButtonList)
             {
-                Action onClick;
-                if (button.name == ButtonEnum.RestartButton.ToString())
-                {
-                    onClick = () =>
-                    {
-                        ctx.eventBus.Publish(new ReInitGameEvent());
-                        popup.gameObject.SetActive(false);
-                    };
-                }
-                else if (button.name == ButtonEnum.ReturnButton.ToString())
+                if (button.name == ButtonEnum.ExitButton.ToString())
                 {
                     onClick = () =>
                     {
                         ctx.eventBus.Publish(new ReturnMenuEvent());
                         popup.gameObject.SetActive(false);
+                        popup.transform.DOScale(1f, 0.5f);
+                    };
+                }
+                else if (button.name == ButtonEnum.RestartButton.ToString())
+                {
+                    onClick = () =>
+                    {
+                        ctx.eventBus.Publish(new ReInitGameEvent());
+                        popup.gameObject.SetActive(false);
+                        popup.transform.DOScale(1f, 0.5f);
                     };
                 }
                 else
@@ -101,6 +115,7 @@ namespace PGC.System
                     {
                         ctx.gameSystemState.isRunning = true;
                         popup.gameObject.SetActive(false);
+                        popup.transform.DOScale(1f, 0.5f);
                     };
                 }
                 popupActions.Add(button.name, onClick);

@@ -3,7 +3,7 @@
     public enum ButtonEnum
     {
         RestartButton,
-        ReturnButton,
+        ExitButton,
         ContinueButton,
     }
 }

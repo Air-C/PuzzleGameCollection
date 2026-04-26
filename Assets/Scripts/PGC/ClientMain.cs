@@ -13,16 +13,14 @@ using PGC.ModuleInventory.SO;
 using PGC.ModuleItem.Model;
 using PGC.Pool;
 using PGC.System;
-using PGC.VFX;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
-using ScoreSystem = PGC.ModuleScore.ScoreSystem;
 
 namespace PGC
 {
     public class ClientMain : MonoBehaviour
     {
+        // game view
         [SerializeField]
         private List<GameObject> itemsBar;
         [SerializeField]
@@ -30,9 +28,11 @@ namespace PGC
         [SerializeField]
         private GameObject pauseGameButton;
         [SerializeField]
-        private GameObject startMenu;
-        [SerializeField]
         private GameObject settingsBar;
+        
+        // Global view
+        [SerializeField]
+        private GameObject startMenu;
         [SerializeField]
         private Image backGroundUI;
         [SerializeField]
@@ -71,6 +71,8 @@ namespace PGC
             ctx.settingsBar = settingsBar;
             ctx.backGroundUI = backGroundUI;
             ctx.loadingUI = loadingUI;
+            
+            
         }
 
         void Start()
