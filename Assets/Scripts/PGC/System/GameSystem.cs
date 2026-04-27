@@ -138,7 +138,7 @@ namespace PGC
         {
             ctx.gameSystemState.isRunning = false;
             renderSystem.ShowPausePopup();
-            audioManager.PauseAudio();
+            // audioManager.PauseAudio();
         }
         
         
