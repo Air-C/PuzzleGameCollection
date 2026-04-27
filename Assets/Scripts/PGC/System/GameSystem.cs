@@ -146,7 +146,7 @@ namespace PGC
         {
             ctx.gameSystemState.isRunning = false;
             renderSystem.ShowGameOverPopup();
-            audioManager.StopAudio();
+            // audioManager.StopAudio();
         }
 
         void OnReturnMenu(ReturnMenuEvent e)
