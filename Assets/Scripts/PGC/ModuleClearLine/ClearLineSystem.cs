@@ -66,7 +66,6 @@ namespace PGC.ModuleClearLine
             {
                 if (ctx.grid.Get(index.x, index.y) == null)
                 {
-                    SquareDown(index);
                     continue;
                 }
                 if (ctx.grid.Get(index.x,index.y).AbilityType != ItemAbilityType.None)
@@ -76,9 +75,9 @@ namespace PGC.ModuleClearLine
                 }
                 ctx.squaresWaitForDestroy.squares.Add(ctx.grid.Get(index.x,index.y));
                 ctx.grid.ClearCell(index.x,index.y);
-                SquareDown(index);
             }
-            
+            SquareDown();
+
             if (itemTypes.Count > 0)
             {
                 AddItemEvent e = new AddItemEvent(itemTypes);
@@ -87,23 +86,26 @@ namespace PGC.ModuleClearLine
             ctx.eventBus.Publish<SquareClearedEvent>(new SquareClearedEvent(indexes));
         }
 
-        void SquareDown(Vector2Int index)
+        void SquareDown()
         {
-            if (ctx.grid.GridIndexIsNotNull(index.x, index.y))
+            for (int x = 0; x < ctx.grid.GridBorder.x; x++)
             {
-                return;
+                int writeY = 0;
+                for (int y = 0; y < ctx.grid.GridBorder.y; y++)
+                {
+                    if(ctx.grid.Get(x,y) != null)
+                    {
+                        if (writeY != y)
+                        {
+                            ctx.grid.Set(x,writeY, ctx.grid.Get(x,y));
+                            ctx.grid.Get(x,writeY)?.RestIndex(x,writeY);
+                            ctx.grid.Set(x,y,null);
+                        }
+                        writeY++;
+                    }
+                }
+
             }
-            if (index.y >= ctx.grid.GridBorder.y)
-            {
-                return;
-            }
-            if (ctx.grid.GridIndexIsNotNull(index.x, index.y+1))
-            {
-                ctx.grid.Set(index.x,index.y,ctx.grid.Get(index.x,index.y+1));
-                ctx.grid.Get(index.x,index.y).RestIndex(index.x,index.y);
-                ctx.grid.Set(index.x,index.y+1,null);
-            }
-            SquareDown(new Vector2Int(index.x,index.y+1));
         }
 
         void CountCircleSquares(WaitForClearModel e,List<Vector2Int> indexs)

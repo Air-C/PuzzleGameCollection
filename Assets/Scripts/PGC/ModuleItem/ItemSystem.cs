@@ -18,13 +18,9 @@ namespace PGC.ModuleItem
         private GameContext ctx;
         private Dictionary<ItemAbilityType, Action> positiveActions;
         private Dictionary<ItemAbilityType, Action> negativeActions;
-        private GridController gridController;
-        private ShapeController shapeController;
         public ItemSystem(GameContext ctx)
         {
             this.ctx = ctx;
-            gridController = new GridController(ctx);
-            shapeController = new ShapeController(ctx);
             positiveActions = new Dictionary<ItemAbilityType, Action>()
             {
                 {ItemAbilityType.Boom2, Boom},
@@ -182,7 +178,7 @@ namespace PGC.ModuleItem
         {
             WaitForClearModel waitForClearModel = new WaitForClearModel();
             waitForClearModel.clearSquareType = ClearSquareType.Column;
-            waitForClearModel.waitForClearColumns = new HashSet<int>(){0};
+            waitForClearModel.waitForClearColumns = new HashSet<int>(){Random.Range(0, ctx.grid.GridBorder.x)};
             ctx.clearModels.Enqueue(waitForClearModel);
         }
 
@@ -190,7 +186,7 @@ namespace PGC.ModuleItem
         {
             WaitForClearModel waitForClearModel = new WaitForClearModel();
             waitForClearModel.clearSquareType = ClearSquareType.Circle;
-            waitForClearModel.waitForClearCircle = (new Vector2Int(0,0), 3);
+            waitForClearModel.waitForClearCircle = (new Vector2Int(Random.Range(0, ctx.grid.GridBorder.x),2), 3);
             ctx.clearModels.Enqueue(waitForClearModel);
         }
     }
