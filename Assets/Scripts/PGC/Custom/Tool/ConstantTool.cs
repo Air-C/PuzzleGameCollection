@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Entities;
 using UnityEngine;
 using Random = System.Random;
@@ -47,6 +48,28 @@ namespace Custom.Tool
             T[] values = (T[])Enum.GetValues(typeof(T));
             int index = Array.IndexOf(values, value);
             return values[(index+1) % values.Length];
+        }
+        
+        /// <summary>
+        /// 使用 Fisher-Yates 算法原地打乱列表顺序
+        /// </summary>
+        private static readonly Random _globalRandom = new Random();
+        public static void Shuffle<T>(IList<T> list)
+        {
+            if (list == null || list.Count <= 1) return;
+
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                // 生成 [0, n] 范围内的随机索引
+                int k = _globalRandom.Next(n + 1);
+            
+                // 交换元素
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
         }
     }
 

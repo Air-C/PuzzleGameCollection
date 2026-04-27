@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Custom.Tool;
 using Entities.SO;
 using PGC.Entities.Grid.SO;
 using PGC.Enum;
@@ -22,6 +23,7 @@ namespace PGC.ModuleAsset
         private GameContext ctx;
         readonly List<SquareSo> squareSoList = new ();
         readonly List<SquareShapeSo> squareShapeSoList = new ();
+        readonly Queue<SquareShapeSo> shapeSoBagQueue = new ();
         public GridSo gridSo;
         public GameObject destroyParticleSystemPrefab;
         public Dictionary<ShapeTypeEnum, Sprite> shapePreviewPrefabDictionary = new ();
@@ -245,8 +247,16 @@ namespace PGC.ModuleAsset
                 squareShapeSo = null;
                 return false;
             }
-            int index = Random.Range(0, squareShapeSoList.Count);
-            squareShapeSo = squareShapeSoList[index];
+            // 随机7-bag
+            if (shapeSoBagQueue.Count <= 0)
+            {
+                ConstantTool.Shuffle(squareShapeSoList);
+                foreach (var shapeSo in squareShapeSoList)
+                {
+                    shapeSoBagQueue.Enqueue(shapeSo);
+                }
+            }
+            squareShapeSo = shapeSoBagQueue.Dequeue();
             return true;
         }
 
