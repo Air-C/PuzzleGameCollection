@@ -39,7 +39,6 @@ namespace PGC
         private Slider loadingUI;
 
         GameContext ctx = new ();
-        bool isAssetLoaded;
         GameSystem gameSystem;
         SaveDataSystem saveSystem;
         
@@ -119,7 +118,6 @@ namespace PGC
             ctx.particlePool = new ParticlePool(ctx);
             ctx.squarePool = new SquarePool(ctx);
             gameSystem = new GameSystem(ctx);
-            isAssetLoaded = true;
             ctx.loadingUI.value = 1;
             gameSystem.InitGame();
             ctx.loadingUI.gameObject.SetActive(false);

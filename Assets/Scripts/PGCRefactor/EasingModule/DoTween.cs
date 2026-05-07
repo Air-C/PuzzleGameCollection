@@ -2,7 +2,7 @@
 using PGC.ModuleEasing.Enum;
 using UnityEngine;
 
-namespace PGC.ModuleEasing
+namespace PGC.EasingModule
 {
     public class DoTween
     {
