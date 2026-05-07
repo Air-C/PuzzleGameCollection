@@ -1,3 +1,4 @@
+using System;
 using PGCRefactor.GameLogicModule.GameLogic.Enum;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ namespace PGCRefactor.GameLogicModule.GameLogic.TM
         public Vector2Int[] GetOffsets(TetrominoType type) => shapes[(int)type].offsets;
     }
 
-    [System.Serializable]
+    [Serializable]
     public class ShapeData
     {
         public TetrominoType type;

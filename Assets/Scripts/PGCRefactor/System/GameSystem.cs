@@ -3,6 +3,8 @@ using PGCRefactor.GameLogicModule.FSM;
 using PGCRefactor.GameLogicModule.FSM.Enum;
 using PGCRefactor.GameLogicModule.GameLogic.Controller;
 using PGCRefactor.GameLogicModule.GameLogic.TM;
+using PGCRefactor.InputModule.Interface;
+using UnityEngine;
 
 namespace PGCRefactor.System
 {
@@ -11,10 +13,16 @@ namespace PGCRefactor.System
         private readonly GameFsm            _gameFsm;
         private readonly GameSessionContext _session;
 
-        public GameSystem(GameFsm fsm, BoardSO boardSO, ShapeSO shapeSO)
+        public GameSystem(GameFsm fsm, BoardSO boardSO, ShapeSO shapeSO, GameSettingSO settingSO, IInputProvider inputProvider)
         {
             _gameFsm = fsm;
-            _session = new GameSessionContext { boardSO = boardSO, shapeSO = shapeSO };
+            _session = new GameSessionContext
+            {
+                boardSO       = boardSO,
+                shapeSO       = shapeSO,
+                settingSO     = settingSO,
+                inputProvider = inputProvider
+            };
             _gameFsm.SetSessionContext(_session);   // inject once; valid for the whole app lifetime
         }
 
@@ -22,7 +30,11 @@ namespace PGCRefactor.System
         public void InitializeGame() => _gameFsm.ChangeState(GameStateEnum.Loading);
 
         // Drives the FSM Update every frame (called from MonoBehaviour.Update)
-        public void GameLoop() => _gameFsm.Update();
+        public void GameLoop()
+        {
+            _session.inputProvider.Update(Time.deltaTime);
+            _gameFsm.Update();
+        }
 
         // ---- External state-change triggers (UI buttons) ----
 
@@ -38,6 +50,8 @@ namespace PGCRefactor.System
             _session.boardEntity     = null;
             _session.tetrominoEntity = null;
             _session.pieceBag        = null;
+            _session.holdComponent   = null;
+            _session.dasComponent    = null;
             _gameFsm.ChangeState(GameStateEnum.GameLoop);
         }
 

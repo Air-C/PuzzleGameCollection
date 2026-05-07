@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using PGCRefactor.AudioModule;
+using PGCRefactor.InputModule;
 using PGCRefactor.System;
 using PGCRefactor.GameLogicModule.FSM;
 using PGCRefactor.GameLogicModule.FSM.Enum;
@@ -34,8 +35,9 @@ namespace PGCRefactor
         private GameObject loadingPage;
 
         // ScriptableObject configs
-        [SerializeField] private BoardSO boardSO;
-        [SerializeField] private ShapeSO shapeSO;
+        [SerializeField] private BoardSO       boardSO;
+        [SerializeField] private ShapeSO       shapeSO;
+        [SerializeField] private GameSettingSO gameSetting;
 
         private readonly GameContext _ctx = new ();
         private GameSystem _gameSystem;
@@ -53,7 +55,7 @@ namespace PGCRefactor
             UICommander uiCommander = new UICommander(this, _ctx.audioManager);
             _ctx.uiManager = new UIManager(_ctx.assetsLoadModule, defaultCanvas.transform, loadingPage, uiCommander, mainMenuUI);
             _ctx.gameFsm = new GameFsm(_ctx.uiManager,_ctx.uiManager);
-            _gameSystem = new GameSystem(_ctx.gameFsm, boardSO, shapeSO);
+            _gameSystem = new GameSystem(_ctx.gameFsm, boardSO, shapeSO, gameSetting, new InputManager());
             _gameSystem.InitializeGame();
         }
         

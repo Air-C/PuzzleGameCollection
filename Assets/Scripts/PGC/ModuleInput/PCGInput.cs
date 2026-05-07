@@ -136,6 +136,15 @@ public partial class @PCGInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Hold"",
+                    ""type"": ""Button"",
+                    ""id"": ""3b55990d-75b2-4bd6-90c9-669161b9f777"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -226,6 +235,17 @@ public partial class @PCGInput: IInputActionCollection2, IDisposable
                     ""action"": ""Change"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""44d81c09-ead1-4690-9064-c2dd5676206a"",
+                    ""path"": ""<Keyboard>/t"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Hold"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -239,6 +259,7 @@ public partial class @PCGInput: IInputActionCollection2, IDisposable
         m_Square_MoveDown = m_Square.FindAction("MoveDown", throwIfNotFound: true);
         m_Square_Rotate = m_Square.FindAction("Rotate", throwIfNotFound: true);
         m_Square_Change = m_Square.FindAction("Change", throwIfNotFound: true);
+        m_Square_Hold = m_Square.FindAction("Hold", throwIfNotFound: true);
     }
 
     ~@PCGInput()
@@ -324,6 +345,7 @@ public partial class @PCGInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Square_MoveDown;
     private readonly InputAction m_Square_Rotate;
     private readonly InputAction m_Square_Change;
+    private readonly InputAction m_Square_Hold;
     /// <summary>
     /// Provides access to input actions defined in input action map "Square".
     /// </summary>
@@ -355,6 +377,10 @@ public partial class @PCGInput: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Square/Change".
         /// </summary>
         public InputAction @Change => m_Wrapper.m_Square_Change;
+        /// <summary>
+        /// Provides access to the underlying input action "Square/Hold".
+        /// </summary>
+        public InputAction @Hold => m_Wrapper.m_Square_Hold;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -396,6 +422,9 @@ public partial class @PCGInput: IInputActionCollection2, IDisposable
             @Change.started += instance.OnChange;
             @Change.performed += instance.OnChange;
             @Change.canceled += instance.OnChange;
+            @Hold.started += instance.OnHold;
+            @Hold.performed += instance.OnHold;
+            @Hold.canceled += instance.OnHold;
         }
 
         /// <summary>
@@ -422,6 +451,9 @@ public partial class @PCGInput: IInputActionCollection2, IDisposable
             @Change.started -= instance.OnChange;
             @Change.performed -= instance.OnChange;
             @Change.canceled -= instance.OnChange;
+            @Hold.started -= instance.OnHold;
+            @Hold.performed -= instance.OnHold;
+            @Hold.canceled -= instance.OnHold;
         }
 
         /// <summary>
@@ -497,5 +529,12 @@ public partial class @PCGInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnChange(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Hold" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnHold(InputAction.CallbackContext context);
     }
 }

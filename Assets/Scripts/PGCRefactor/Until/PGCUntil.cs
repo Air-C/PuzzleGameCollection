@@ -1,4 +1,5 @@
-﻿using PGCRefactor.Enum;
+﻿using System;
+using PGCRefactor.Enum;
 
 namespace PGCRefactor.Until
 {
@@ -10,7 +11,7 @@ namespace PGCRefactor.Until
             {
                 PrefabEnumPopup.PausePopup => PrefabEnum.PausePopup,
                 PrefabEnumPopup.GameOverPopup => PrefabEnum.GameOverPopup,
-                _ => throw new System.ArgumentOutOfRangeException(nameof(prefabEnumPopup), prefabEnumPopup, null)
+                _ => throw new ArgumentOutOfRangeException(nameof(prefabEnumPopup), prefabEnumPopup, null)
             };
         }
     }

@@ -35,6 +35,18 @@ namespace PGCRefactor.GameLogicModule.GameLogic.Controller
             ctx.pieceBag.previewType = DrawNext(ctx.pieceBag);
         }
 
+        // Populate tetrominoEntity from a specific type (used by Hold mechanic).
+        // Does not draw from or refresh the preview queue.
+        // Caller must invoke BoardController.SpawnShape(ctx) immediately after.
+        public static void PrepareFromType(GameSessionContext ctx, TetrominoType type)
+        {
+            var pivot = new Vector2Int(ctx.boardSO.width / 2, 0);
+            ctx.tetrominoEntity.Reset();
+            ctx.tetrominoEntity.type    = type;
+            ctx.tetrominoEntity.pivot   = pivot;
+            ctx.tetrominoEntity.offsets = ctx.shapeSO.GetOffsets(type);
+        }
+
         // Populate tetrominoEntity from the current preview and advance the preview queue.
         // Caller must invoke BoardController.SpawnShape(ctx) immediately after to stamp the board.
         public static void PrepareFromPreview(GameSessionContext ctx)

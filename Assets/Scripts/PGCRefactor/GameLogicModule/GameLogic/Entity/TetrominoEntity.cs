@@ -18,13 +18,17 @@ namespace PGCRefactor.GameLogicModule.GameLogic.Entity
         // null when no active piece (triggers next spawn)
         public Vector2Int[] currentCells;
 
+        // 0=initial, increments clockwise mod 4; used for SRS wall-kick table lookup
+        public int rotationState;
+
         // Call when the piece locks; resets all fields so the entity is ready for the next spawn.
         public void Reset()
         {
-            type         = default;
-            pivot        = default;
-            offsets      = null;
-            currentCells = null;
+            type          = default;
+            pivot         = default;
+            offsets       = null;
+            currentCells  = null;
+            rotationState = 0;
         }
     }
 }
