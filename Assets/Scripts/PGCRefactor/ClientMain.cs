@@ -1,14 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using PGCRefactor.AudioModule;
-using PGCRefactor.InputModule;
+using PGCRefactor.PresenterLayer.AudioModule;
+using PGCRefactor.AssetsLoadModule.InputModule;
 using PGCRefactor.System;
 using PGCRefactor.GameLogicModule.FSM;
 using PGCRefactor.GameLogicModule.FSM.Enum;
 using PGCRefactor.GameLogicModule.GameLogic.TM;
 using PGCRefactor.Interface;
-using PGCRefactor.ModuleAsset;
-using PGCRefactor.UIModule;
+using PGCRefactor.InfrastructureLayer.AssetsLoadModule;
+using PGCRefactor.PresenterLayer.UIModule;
 using UnityEngine;
 using UnityEngine.UI;
 

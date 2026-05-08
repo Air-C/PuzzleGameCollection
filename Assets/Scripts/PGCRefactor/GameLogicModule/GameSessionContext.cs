@@ -1,7 +1,7 @@
 using PGCRefactor.GameLogicModule.GameLogic.Component;
 using PGCRefactor.GameLogicModule.GameLogic.Entity;
 using PGCRefactor.GameLogicModule.GameLogic.TM;
-using PGCRefactor.InputModule.Interface;
+using PGCRefactor.AssetsLoadModule.InputModule.Interface;
 
 namespace PGCRefactor.GameLogicModule
 {

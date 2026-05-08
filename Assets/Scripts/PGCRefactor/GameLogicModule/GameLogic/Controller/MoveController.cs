@@ -2,7 +2,7 @@ using PGCRefactor.GameLogicModule.GameLogic.Component;
 using PGCRefactor.GameLogicModule.GameLogic.Enum;
 using PGCRefactor.GameLogicModule.GameLogic.System;
 using PGCRefactor.GameLogicModule.GameLogic.TM;
-using PGCRefactor.InputModule.Enum;
+using PGCRefactor.AssetsLoadModule.InputModule.Enum;
 using UnityEngine;
 
 namespace PGCRefactor.GameLogicModule.GameLogic.Controller

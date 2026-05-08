@@ -1,7 +1,7 @@
 ﻿using PGCRefactor.GameLogicModule.FSM.Enum;
 using PGCRefactor.GameLogicModule.FSM.Interface;
-using PGCRefactor.UIModule;
-using PGCRefactor.UIModule.DipInterface;
+using PGCRefactor.PresenterLayer.UIModule;
+using PGCRefactor.PresenterLayer.UIModule.Interface;
 
 namespace PGCRefactor.GameLogicModule.FSM
 {
