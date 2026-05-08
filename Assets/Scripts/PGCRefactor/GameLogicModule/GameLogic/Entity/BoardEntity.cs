@@ -9,7 +9,7 @@ namespace PGCRefactor.GameLogicModule.GameLogic.Entity
 
         public BoardEntity(BoardSO boardSO)
         {
-            grid = new BoardGridComponent(boardSO.width, boardSO.height);
+            grid = new BoardGridComponent(boardSO.width, boardSO.height + boardSO.preHeight);
         }
     }
 }

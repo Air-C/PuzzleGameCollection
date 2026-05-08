@@ -19,6 +19,7 @@ namespace PGCRefactor.GameLogicModule.GameLogic.TM
         public TetrominoType type;
 
         // all cell offsets relative to pivot, including the pivot cell itself (0,0)
+        // y-up: positive y = above pivot. Pivot sits on the bottom row of the piece.
         // I : (-1,0)(0,0)(1,0)(2,0)
         // O : (0,0)(1,0)(0,1)(1,1)
         // T : (-1,0)(0,0)(1,0)(0,1)

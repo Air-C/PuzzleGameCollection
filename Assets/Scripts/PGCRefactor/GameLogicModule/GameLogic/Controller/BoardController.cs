@@ -87,16 +87,17 @@ namespace PGCRefactor.GameLogicModule.GameLogic.Controller
 
         // Shifts rows above cleared lines downward, preserving existing holes.
         // Accepts the cleared-row indices so any clearing strategy can reuse it.
+        // y=0 is the floor; rows above a cleared line (higher y) shift down (lower y).
         public static void ShiftRowsDown(GameSessionContext ctx, int[] fullRows, int fullCount)
         {
             var grid = ctx.boardEntity.grid;
 
             int startY = fullRows[0];
             for (int i = 1; i < fullCount; i++)
-                if (fullRows[i] > startY) startY = fullRows[i];
+                if (fullRows[i] < startY) startY = fullRows[i];
 
             int writeY = startY;
-            for (int readY = startY; readY >= 0; readY--)
+            for (int readY = startY; readY < grid.height; readY++)
             {
                 bool isFull = false;
                 for (int i = 0; i < fullCount; i++)
@@ -106,15 +107,15 @@ namespace PGCRefactor.GameLogicModule.GameLogic.Controller
                 if (readY != writeY)
                     for (int x = 0; x < grid.width; x++)
                         grid.cells[x, writeY] = grid.cells[x, readY];
-                writeY--;
+                writeY++;
             }
 
-            for (int y = writeY; y >= 0; y--)
+            for (int y = writeY; y < grid.height; y++)
                 for (int x = 0; x < grid.width; x++)
                     grid.cells[x, y] = CellState.Free;
         }
 
-        // Compresses each column independently: occupied cells sink to the bottom,
+        // Compresses each column independently: occupied cells sink to the bottom (y=0),
         // Free gaps bubble to the top. For special clearing strategies only —
         // standard line-clear uses ShiftRowsDown to preserve existing holes.
         public static void CompressColumns(GameSessionContext ctx)
@@ -124,15 +125,15 @@ namespace PGCRefactor.GameLogicModule.GameLogic.Controller
 
             for (int x = 0; x < grid.width; x++)
             {
-                int writeY = height - 1;
-                for (int readY = height - 1; readY >= 0; readY--)
+                int writeY = 0;
+                for (int readY = 0; readY < height; readY++)
                 {
                     if (grid.cells[x, readY] == CellState.Free) continue;
                     grid.cells[x, writeY] = grid.cells[x, readY];
                     if (writeY != readY) grid.cells[x, readY] = CellState.Free;
-                    writeY--;
+                    writeY++;
                 }
-                for (int y = writeY; y >= 0; y--)
+                for (int y = writeY; y < height; y++)
                     grid.cells[x, y] = CellState.Free;
             }
         }

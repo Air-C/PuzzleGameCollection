@@ -16,7 +16,7 @@ namespace PGCRefactor.GameLogicModule.GameLogic.System
         {
             var te       = ctx.tetrominoEntity;
             var grid     = ctx.boardEntity.grid;
-            var newPivot = new Vector2Int(te.pivot.x, te.pivot.y + 1);
+            var newPivot = new Vector2Int(te.pivot.x, te.pivot.y - 1);
 
             foreach (var cell in te.currentCells)
                 grid.cells[cell.x, cell.y] = CellState.Free;

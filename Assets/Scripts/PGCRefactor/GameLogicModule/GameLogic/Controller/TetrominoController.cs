@@ -40,7 +40,7 @@ namespace PGCRefactor.GameLogicModule.GameLogic.Controller
         // Caller must invoke BoardController.SpawnShape(ctx) immediately after.
         public static void PrepareFromType(GameSessionContext ctx, TetrominoType type)
         {
-            var pivot = new Vector2Int(ctx.boardSO.width / 2, 0);
+            var pivot = ctx.boardSO.initCenter;
             ctx.tetrominoEntity.Reset();
             ctx.tetrominoEntity.type    = type;
             ctx.tetrominoEntity.pivot   = pivot;
@@ -52,7 +52,7 @@ namespace PGCRefactor.GameLogicModule.GameLogic.Controller
         public static void PrepareFromPreview(GameSessionContext ctx)
         {
             var type    = ctx.pieceBag.previewType;
-            var pivot   = new Vector2Int(ctx.boardSO.width / 2, 0);
+            var pivot   = ctx.boardSO.initCenter;
             ctx.tetrominoEntity.Reset();
             ctx.tetrominoEntity.type    = type;
             ctx.tetrominoEntity.pivot   = pivot;

@@ -6,6 +6,9 @@ namespace PGCRefactor.GameLogicModule.GameLogic.TM
     public class BoardSO : ScriptableObject
     {
         public int width  = 10;
-        public int height = 20;
+        public int height = 14;
+        public  Vector2Int initCenter = new (4, 14);
+        public int preHeight = 3;
+
     }
 }

@@ -111,7 +111,7 @@ namespace PGCRefactor.GameLogicModule.GameLogic.Controller
             StampCells(ctx, te.pivot, te.offsets);
         }
 
-        // CW rotation in y-down display: (x, y) → (y, -x)
+        // CW rotation in y-up display: (x, y) → (y, -x)
         private static Vector2Int[] RotateCW(Vector2Int[] offsets)
         {
             for (int i = 0; i < offsets.Length; i++)
